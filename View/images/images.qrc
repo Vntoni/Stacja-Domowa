@@ -1,0 +1,6 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="icons">
+        <file alias="house.jpg">C:\Users\85faht\Baza_Domowa\View\images\house.jfif</file>
+    </qresource>
+</RCC>
