@@ -1,198 +1,68 @@
-import QtQuick 6.3
-import QtQuick.Controls 6.3
-import QtQuick.Effects
+import QtQuick 2.15
+import QtQuick.Controls 2.15
+import QtQuick.Layouts 1.15
+import QtQuick.Window 2.15
+
+import "components"
 
 ApplicationWindow {
-    id: root
     visible: true
-    width: 1280
-    height: 1024
-    title: "Home"
+    width: 800
+    height: 480
+    title: "Domowy Panel Sterowania"
+    color: "#121212"
 
-    Loader {
-            id:popupLoader
-            anchors.centerIn: parent
-            onLoaded: item.open()
-
-        }
-
-        function loadPopup(popupFile) {
-            popupLoader.source = popupFile
-            stackView.currentItem.blurAnim.start()
-        }
-        function closePopup() {
-            popupLoader.source = ""
-            stackView.currentItem.blurAnimReverse.start()
-        }
-
-
-
-    TabBar {
-        id:bar
-        width: parent.width
-        TabButton {
-            height:100
-            text: "Parter"
-            onClicked: {
-                //stackView.replace(backgroundImageParter)
-                stackView.replace(parter)
-
-            }
-            }
-        TabButton {
-            height:100
-            text: "Pietro"
-            onClicked: {
-                //stackView.replace(backgroundImagePietro)
-                stackView.replace(pietro)
-
-            }
-            }
-    }
-    StackView{
-        id: stackView
-        initialItem: parter
+    ColumnLayout {
         anchors.fill: parent
-        width: parent.width
 
-    }
+        // GÓRA: Statusy
+        Rectangle {
+            Layout.preferredHeight: 200
+            color: "#2E2E2E"
+            width: parent.width
 
-
-    Component {
-        id: parter
-
-        Item {
-            width: root.width
-            height: root.height
-
-            property alias blurAnim: blurAnim
-            property alias blurAnimReverse: blurAnimReverse
-
-        Image {
-            id: backgroundImageParter
-            anchors.fill: parent
-            anchors.topMargin: 60
-            anchors.bottomMargin: 50
-            source: 'file:///C:/Users/85faht/Baza_Domowa/View/images/wall2.jpg'
-            fillMode: Image.PreserveAspectFit
-
-
-        }
-
-        MultiEffect {
-            id: blurEffect
-            anchors.fill: backgroundImageParter
-            source: backgroundImageParter
-            blurEnabled: true
-            blur: 0
-            opacity: 0
-        }
-        PropertyAnimation {
-                id:blurAnim
-                target: blurEffect
-                properties: "blur, opacity"
-                from: 0.0, 0
-                to: 0.4, 1
-                duration: 1200
-                easing.type: Easing.OutCubic
-        }
-
-        PropertyAnimation {
-                id:blurAnimReverse
-                target: blurEffect
-                properties: "blur, opacity"
-                from: 0.4, 1
-                to: 0.0, 0
-                duration: 400
-                easing.type: Easing.InCubic
-        }
-
-            Rectangle{
-                anchors.bottom: parent.bottom
-                height: 150
-                color: "transparent"
-                width: parent.width
-
-
-            Row {
-                id: buttons
-                spacing: 100
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                Button
-                {
-                    text: "Jadalnia"
-                    height: 100
-                    width: 200
-                }
-                Button
-                {
-                    text: "Salon"
-                    height: 100
-                    width: 200
-                    onClicked: {
-                        loadPopup("Salon.qml")
-                        console.log("przycisk klikniety")
-                    }
-                }
-            }
-    }    }
-}
-    Component {
-        id: pietro
-
-        Item {
-            width: root.width
-            height: root.height
-
-
-
-            Image {
-                id: backgroundImagePietro
-                anchors.centerIn: parent
+            RowLayout {
                 anchors.fill: parent
-                anchors.topMargin: 60
-                anchors.bottomMargin: 50
-                source: 'file:///C:/Users/85faht/Baza_Domowa/View/images/house.jpg'
-                fillMode: Image.PreserveAspectFit
+                anchors.margins: 20
+                spacing: 40
 
+                Text {
+                    text: "Temperatura: 22°C"
+                    color: "white"
+                    font.pixelSize: 24
                 }
 
-            Rectangle{
-                anchors.bottom: parent.bottom
-                height: 150
-                color: "transparent"
-                width: parent.width
-
-
-
-            Row {
-                id: buttons
-                spacing: 100
-                anchors.horizontalCenter: parent.horizontalCenter
-
-                Button
-                {
-                    text: "Jula"
-                    height: 100
-                    width: 200
+                Text {
+                    text: "Wilgotność: 45%"
+                    color: "white"
+                    font.pixelSize: 24
                 }
-                Button
-                {
-                    text: "Rodzice"
-                    height: 100
-                    width: 200
-                }
-                Button
-                {
-                    text: "Jerzy"
-                    height: 100
-                    width: 200
+
+                Text {
+                    text: "Tryb: AUTO"
+                    color: "white"
+                    font.pixelSize: 24
                 }
             }
         }
 
+        // DÓŁ: Sterowanie
+        Rectangle {
+            Layout.fillHeight: true
+            color: "#1C1C1C"
+            width: parent.width
 
+            GridLayout {
+                anchors.fill: parent
+                anchors.margins: 20
+                columns: 3
+                rowSpacing: 20
+                columnSpacing: 20
+
+                Accontrol {}
+                WaterHeaterControl {}
+                HeaterControl {}
+            }
+        }
     }
-}
 }
