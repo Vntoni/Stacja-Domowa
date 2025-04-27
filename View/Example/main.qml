@@ -2,67 +2,76 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Window 2.15
-
-import "components"
+import QtQuick.Controls.Material 2.15
+import "Components"
 
 ApplicationWindow {
+    id: appWindow
     visible: true
     width: 800
     height: 480
-    title: "Domowy Panel Sterowania"
-    color: "#121212"
+    title: qsTr("Sterowanie ogrzewaniem i podgrzewaniem")
+    Material.theme: Material.Dark
+
+    ACControlPopup { id: acPopup }
 
     ColumnLayout {
         anchors.fill: parent
 
-        // GÓRA: Statusy
-        Rectangle {
-            Layout.preferredHeight: 200
-            color: "#2E2E2E"
-            width: parent.width
+        // Pasek zakładek
+        TabBar {
+            id: tabBar
+            Layout.preferredHeight: 50
 
-            RowLayout {
-                anchors.fill: parent
-                anchors.margins: 20
-                spacing: 40
-
-                Text {
-                    text: "Temperatura: 22°C"
-                    color: "white"
-                    font.pixelSize: 24
+            TabButton {
+                text: qsTr("Parter")
+                onClicked: {
+                    contentLoader.source = "Components/Accontrol.qml"
                 }
-
-                Text {
-                    text: "Wilgotność: 45%"
-                    color: "white"
-                    font.pixelSize: 24
-                }
-
-                Text {
-                    text: "Tryb: AUTO"
-                    color: "white"
-                    font.pixelSize: 24
+            }
+            TabButton {
+                text: qsTr("Piętro")
+                onClicked: {
+                    contentLoader.source = "Components/HeaterControl.qml"
                 }
             }
         }
 
-        // DÓŁ: Sterowanie
-        Rectangle {
-            Layout.fillHeight: true
-            color: "#1C1C1C"
-            width: parent.width
+        // Pasek nagłówka z wykorzystaniem HomeIcon
+        RowLayout {
+            id: headerRow
+            Layout.fillWidth: true
+            Layout.preferredHeight: 50
+            spacing: 10
 
-            GridLayout {
-                anchors.fill: parent
-                anchors.margins: 20
-                columns: 3
-                rowSpacing: 20
-                columnSpacing: 20
-
-                Accontrol {}
-                WaterHeaterControl {}
-                HeaterControl {}
+            HomeIcon {
+                id: smartIcon
+                // Animacja obrotu przy kliknięciu
+                Behavior on rotation {
+                    NumberAnimation { duration: 500; easing.type: Easing.OutCubic }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        smartIcon.rotation = (smartIcon.rotation + 360) % 360;
+                    }
+                }
             }
+
+            Text {
+                text: qsTr("Parter - Klimatyzacja i Boiler")
+                font.pixelSize: 28
+                color: "white"
+                Layout.alignment: Qt.AlignVCenter
+            }
+        }
+
+        // Loader do dynamicznego ładowania widoków
+        Loader {
+            id: contentLoader
+            //Layout.fillWidth: true
+            Layout.fillHeight: true
+            source: "Components/Accontrol.qml"
         }
     }
 }
