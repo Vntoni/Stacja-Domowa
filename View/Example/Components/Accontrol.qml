@@ -1,7 +1,7 @@
 import QtQuick 6.8
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
-import QtQuick.Controls.Basic
+import QtQuick.Controls.Basic 2.15
 
 
     Rectangle {
@@ -13,15 +13,24 @@ import QtQuick.Controls.Basic
         border.color: "white"
         border.width: 1
 
-        MouseArea {
-                anchors.fill: parent
-                acceptedButtons: Qt.LeftButton
-                doubleClickEnabled: true
-                onDoubleClicked: {
-                    acPopup.room = "Salon"
-                    acPopup.open()
-                }
+       MultiPointTouchArea {
+        anchors.fill: parent
+        minimumTouchPoints: 1
+        maximumTouchPoints: 1
+
+        property double lastTapTime: 0
+        property double doubleTapThreshold: 400 // ms
+
+        onPressed: {
+            var currentTime = Date.now();
+            if (currentTime - lastTapTime < doubleTapThreshold) {
+                // Double tap detected
+                acPopup.room = "Salon"
+                acPopup.open();
             }
+            lastTapTime = currentTime;
+        }
+        }
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 10
@@ -37,7 +46,7 @@ import QtQuick.Controls.Basic
 
 
             Switch {
-        id: control
+        id: saloncontrol
         text: qsTr("ON/OFF")
         onToggled:{
         control.checked ? backend.turn_on_ac('Salon'):
@@ -47,94 +56,34 @@ import QtQuick.Controls.Basic
         indicator: Rectangle {
             implicitWidth: 48
             implicitHeight: 26
-            x: control.leftPadding
+            x: saloncontrol.leftPadding
             y: parent.height / 2 - height / 2
             radius: 13
-            color: control.checked ? "#17a81a" : "#ffffff"
-            border.color: control.checked ? "#17a81a" : "#cccccc"
+            color: saloncontrol.checked ? "#17a81a" : "#ffffff"
+            border.color: saloncontrol.checked ? "#17a81a" : "#cccccc"
 
             Rectangle {
-                x: control.checked ? parent.width - width : 0
+                x: saloncontrol.checked ? parent.width - width : 0
                 width: 26
                 height: 26
                 radius: 13
-                color: control.down ? "#cccccc" : "#ffffff"
-                border.color: control.checked ? (control.down ? "#17a81a" : "#21be2b") : "#999999"
+                color: saloncontrol.down ? "#cccccc" : "#ffffff"
+                border.color: saloncontrol.checked ? (saloncontrol.down ? "#17a81a" : "#21be2b") : "#999999"
             }
         }
 
         contentItem: Text {
-            text: control.text
-            font: control.font
+            text: saloncontrol.text
+            font: saloncontrol.font
             opacity: enabled ? 1.0 : 0.3
-            color: control.down ? "#17a81a" : "#21be2b"
+            color: saloncontrol.down ? "#17a81a" : "#21be2b"
             verticalAlignment: Text.AlignVCenter
-            leftPadding: control.indicator.width + control.spacing
+            leftPadding: saloncontrol.indicator.width + saloncontrol.spacing
         }
 }
         }
 
     }
-    Rectangle {
-        id: jadalniaRect
-        width: 200
-        height: 150
-        color: "#222"
-        radius: 10
-        border.color: "white"
-        border.width: 1
-
-        ColumnLayout {
-            anchors.fill: parent
-            anchors.margins: 10
-            spacing: 10
-
-            Label {
-                text: "Klimatyzacja Jadalnia"
-                font.pixelSize: 18
-                color: "white"
-                horizontalAlignment: Text.AlignHCenter
-                Layout.alignment: Qt.AlignHCenter
-            }
-
-
-            Switch {
-        id: control
-        text: qsTr("ON/OFF")
-        onToggled:{
-        control.checked ? backend.turn_on_ac('Jadalnia'):
-        backend.turn_off_ac('Jadalnia')
-        }
-
-        indicator: Rectangle {
-            implicitWidth: 48
-            implicitHeight: 26
-            x: control.leftPadding
-            y: parent.height / 2 - height / 2
-            radius: 13
-            color: control.checked ? "#17a81a" : "#ffffff"
-            border.color: control.checked ? "#17a81a" : "#cccccc"
-
-            Rectangle {
-                x: control.checked ? parent.width - width : 0
-                width: 26
-                height: 26
-                radius: 13
-                color: control.down ? "#cccccc" : "#ffffff"
-                border.color: control.checked ? (control.down ? "#17a81a" : "#21be2b") : "#999999"
-            }
-        }
-
-        contentItem: Text {
-            text: control.text
-            font: control.font
-            opacity: enabled ? 1.0 : 0.3
-            color: control.down ? "#17a81a" : "#21be2b"
-            verticalAlignment: Text.AlignVCenter
-            leftPadding: control.indicator.width + control.spacing
-        }
-}
-        }
 
 
 

@@ -1,6 +1,7 @@
-import QtQuick 2.15
+import QtQuick 6.8
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Controls.Basic 2.15
 
 Popup {
     id: acPopup
@@ -10,61 +11,128 @@ Popup {
     modal: true
     focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    width: 300; height: 260
+    width: 400; height: 400
     background: Rectangle { color: "#333"; radius: 10 }
 
+    Component.onCompleted: {
+    acPopup.x = (parent.width - acPopup.width) / 2
+    acPopup.y = (parent.height - acPopup.height) / 2
+}
+
+ColumnLayout {
+    anchors.fill: parent
+    anchors.margins: 20
+    spacing: 20
+
+    // Dial i temp
     ColumnLayout {
+        Layout.alignment: Qt.AlignHCenter
+        spacing: 10
+
+
+    Dial {
+    id: tempDial
+    snapMode: Dial.SnapAlways
+    from: 16
+    to: 30
+    stepSize: 0.5
+    value: 22
+    implicitWidth: 150
+    implicitHeight: 150
+    onMoved: backend.set_target_temp(acPopup.room, value)
+
+    background: Canvas {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 12
+        onPaint: {
+            var ctx = getContext("2d");
+            ctx.reset();
+            ctx.beginPath();
+            ctx.arc(width/2, height/2, width/2 - 5, 0, 2*Math.PI);
+            ctx.strokeStyle = "#17a81a";   // szary pełny okrąg
+            ctx.lineWidth = 10;
+            ctx.stroke();
 
-        // Wyświetlamy nazwę pokoju:
-        Text {
-            text: qsTr("Klimatyzacja %1").arg(acPopup.room);
-            font.pixelSize: 20
+            var angle = (tempDial.value - tempDial.from) / (tempDial.to - tempDial.from) * 2*Math.PI;
+            ctx.beginPath();
+            ctx.arc(width/2, height/2, width/2 - 5, -Math.PI/2, angle - Math.PI/2);
+            ctx.strokeStyle = "#17a81a";   // zielony kawałek
+            ctx.lineWidth = 10;
+            ctx.stroke();
+        }
+    }
+
+    contentItem: Text {
+        anchors.centerIn: parent
+        anchors.verticalCenterOffset: 60
+        anchors.horizontalCenterOffset: 52
+        text: tempDial.value.toFixed(1) + "°C"
+        color: "white"
+        font.pixelSize: 18
+    }
+}
+
+
+
+    Text {
+        text: qsTr("Temperature: ") + tempDial.value.toFixed(1) + "°C"
+        color: "white"
+        font.pixelSize: 16
+    }
+}
+    // Tryb pracy
+    RowLayout {
+        spacing: 10
+        Label {
+            text: "Tryb:"
             color: "white"
-            horizontalAlignment: Text.AlignHCenter
-            Layout.alignment: Qt.AlignHCenter
         }
-
-        // Suwak temperatury
-        RowLayout {
-            spacing: 8
-            Layout.alignment: Qt.AlignHCenter
-
-            Text { text: qsTr("Temp:"); color: "white" }
-
-            Slider {
-                id: tempSlider
-                from: 16; to: 30; stepSize: 0.5
-                onMoved: backend.set_temperature(acPopup.room, value)
-            }
-
-            Text {
-                text: tempSlider.value.toFixed(1) + "°C"
-                color: "white"
-            }
-        }
-
-        // Tryb pracy
         ComboBox {
             id: modeBox
             model: [ "cool", "heat", "dry", "fan", "auto" ]
             currentIndex: 0
-            onCurrentTextChanged: backend.set_mode(acPopup.room, currentText)
+            onCurrentTextChanged: backend.set_mode_operation(acPopup.room, currentText)
         }
+    }
 
-        // Tryb ekonomiczny
+    // Tryby: Economy & Power
+    RowLayout {
+        spacing: 20
+
+       CheckBox {
+            id: economyControl
+            text: "Economy mode"
+            onCheckedChanged: backend.set_economy_mode(acPopup.room, checked ? 1 : 0)
+            // bez contentItem – działa domyślnie dobrze
+            font.pixelSize: 14
+            // Kolor tekstu zależny od stanu:
+            palette.text: economyControl.checked ? "#17a81a" : "white"
+    }
+
         CheckBox {
-            text: qsTr("Economy mode")
-            onCheckedChanged: backend.set_economy_mode(acPopup.room, checked)
-            contentItem: Text { text: control.text; color: control.checked ? "#17a81a" : "white" }
+            id: powerControl
+            text: "Power mode"
+            onCheckedChanged: backend.set_power_mode(acPopup.room, checked ? 1 : 0)
+            contentItem: Text {
+                text: powerControl.text
+                anchors.verticalCenterOffset: 40
+                color: powerControl.checked ? "#17a81a" : "white"
+            }
         }
+    }
+
+    // Spacer + zamknij w prawym dolnym rogu
+    Item {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
+    }
+
+    RowLayout {
+        Layout.alignment: Qt.AlignRight
 
         Button {
-            text: qsTr("Zamknij")
-            Layout.alignment: Qt.AlignHCenter
+            text: "Zamknij"
             onClicked: acPopup.close()
         }
     }
+}
 }
