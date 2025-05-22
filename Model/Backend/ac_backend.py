@@ -1,6 +1,6 @@
 import asyncio
 
-from PySide6.QtCore import QObject
+from PySide6.QtCore import QObject, Signal, Property
 from qasync import asyncSlot
 from Model.AC.AC_Control import ACUnit
 from pyairstage.airstageAC import AirstageAC, ApiCloud
@@ -10,6 +10,7 @@ password = "F5eotvky"
 country = "PL"
 
 class Backend(QObject):
+    tempIndoorChanged = Signal(str, float)
     def __init__(self):
         super().__init__()
         self.salon = None
@@ -20,39 +21,42 @@ class Backend(QObject):
         await api.authenticate()
         self.salon = AirstageAC("E8FB1CFF888D", api)
         self.jadalnia = AirstageAC("505A6531B561", api)
+        await self.jadalnia.refresh_parameters()
+        await self.salon.refresh_parameters()
         print("Jednostki klimatyzacji gotowe!")
 
     @asyncSlot(str)
     async def turn_on_ac(self, room):
         match room:
             case "Salon":
-                await self.salon.turn_on(self)
+                await self.salon.turn_on()
             case "Jadalnia":
-                await self.jadalnia.turn_on(self)
+                await self.jadalnia.turn_on()
 
     @asyncSlot(str)
     async def turn_off_ac(self, room):
         match room:
             case "Salon":
-                await self.salon.turn_off(self)
+                await self.salon.turn_off()
             case "Jadalnia":
-                await self.jadalnia.turn_off(self)
+                await self.jadalnia.turn_off()
 
     @asyncSlot(str)
-    def get_temp_indoor(self, room):
+    async def get_temp_indoor(self, room):
         match room:
             case "Salon":
-                self.salon.get_display_temperature(self)
+                temp = self.salon.get_display_temperature()
             case "Jadalnia":
-                self.jadalnia.get_display_temperature(self)
+                temp = self.jadalnia.get_display_temperature()
+        self.tempIndoorChanged.emit(room, temp)
 
     @asyncSlot(str)
     def get_target_temp(self, room):
         match room:
             case "Salon":
-                self.salon.get_target_temperature(self)
+                self.salon.get_target_temperature()
             case "Jadalnia":
-                self.jadalnia.get_target_temperature(self)
+                self.jadalnia.get_target_temperature()
 
     @asyncSlot(str)
     async def set_target_temp(self, room, temp):
@@ -147,6 +151,6 @@ async def main():
     await x.init_ac_units()
     await x.jadalnia.refresh_parameters()
     await x.salon.refresh_parameters()
-
+    pass
 
 # asyncio.run(main())

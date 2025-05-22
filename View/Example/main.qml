@@ -68,10 +68,11 @@ ApplicationWindow {
 
         // Loader do dynamicznego ładowania widoków
         Loader {
-            id: contentLoader
-            //Layout.fillWidth: true
-            Layout.fillHeight: true
-            source: "Components/Accontrol.qml"
-        }
+    id: contentLoader
+    Layout.fillHeight: true
+    anchors.margins: 10        // +10px odstępu
+    source: "Components/Accontrol.qml"
+    }
+
     }
 }
