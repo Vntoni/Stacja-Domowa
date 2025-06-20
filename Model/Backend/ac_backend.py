@@ -11,6 +11,12 @@ country = "PL"
 
 class Backend(QObject):
     tempIndoorChanged = Signal(str, float)
+
+    modeReceived = Signal(str, str)
+    targetTemperatureReceived = Signal(str, float)
+    economyReceived = Signal(str, bool)
+    powerfulReceived = Signal(str, bool)
+    lowNoiseReceived = Signal(str, bool)
     def __init__(self):
         super().__init__()
         self.salon = None
@@ -54,9 +60,10 @@ class Backend(QObject):
     def get_target_temp(self, room):
         match room:
             case "Salon":
-                self.salon.get_target_temperature()
+                target_temp = self.salon.get_target_temperature()
             case "Jadalnia":
-                self.jadalnia.get_target_temperature()
+                target_temp = self.jadalnia.get_target_temperature()
+        self.targetTemperatureReceived.emit(room, target_temp)
 
     @asyncSlot(str)
     async def set_target_temp(self, room, temp):
@@ -70,9 +77,10 @@ class Backend(QObject):
     def get_economy(self, room):
         match room:
             case "Salon":
-                self.salon.get_economy_mode(self)
+                economy_state = self.salon.get_economy_mode(self)
             case "Jadalnia":
-                self.jadalnia.get_economy_mode(self)
+                economy_state = self.jadalnia.get_economy_mode(self)
+        self.economyReceived.emit(room, economy_state)
 
     @asyncSlot(str)
     async def set_economy(self, room, mode: bool):
@@ -86,10 +94,10 @@ class Backend(QObject):
     def get_powerful(self, room):
         match room:
             case "Salon":
-                self.salon.get_powerful_mode(self)
+                powermode_state = self.salon.get_powerful_mode(self)
             case "Jadalnia":
-                self.jadalnia.get_powerful_mode(self)
-
+                powermode_state = self.jadalnia.get_powerful_mode(self)
+        self.powerfulReceived.emit(room, powermode_state)
     @asyncSlot(str)
     async def set_powerful(self, room, mode: bool):
         match room:
@@ -102,9 +110,10 @@ class Backend(QObject):
     def get_low_noise(self, room):
         match room:
             case "Salon":
-                self.salon.get_outdoor_low_noise(self)
+                lownoise_state = self.salon.get_outdoor_low_noise(self)
             case "Jadalnia":
-                self.jadalnia.get_outdoor_low_noise(self)
+                lownoise_state = self.jadalnia.get_outdoor_low_noise(self)
+        self.lowNoiseReceived.emit(room, lownoise_state)
 
     @asyncSlot(str)
     async def set_low_noise(self, room, mode: bool):
@@ -134,9 +143,10 @@ class Backend(QObject):
     def get_mode_operation(self, room):
         match room:
             case "Salon":
-                self.salon.get_operating_mode(self)
+                mode = self.salon.get_operating_mode(self)
             case "Jadalnia":
-                self.jadalnia.get_operating_mode(self)
+                mode = self.jadalnia.get_operating_mode(self)
+        self.modeReceived.emit(room, mode)
 
     @asyncSlot(str)
     async def set_mode_operation(self, room, mode: int):

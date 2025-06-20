@@ -59,7 +59,7 @@ ApplicationWindow {
             }
 
             Text {
-                text: qsTr("Parter - Klimatyzacja i Boiler")
+                text: qsTr("Parter")
                 font.pixelSize: 28
                 color: "white"
                 Layout.alignment: Qt.AlignVCenter
@@ -73,6 +73,5 @@ ApplicationWindow {
     anchors.margins: 10        // +10px odstępu
     source: "Components/Accontrol.qml"
     }
-
     }
 }

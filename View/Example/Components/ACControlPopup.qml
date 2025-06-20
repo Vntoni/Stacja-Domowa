@@ -1,17 +1,32 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Qt5Compat.GraphicalEffects
+
 Popup {
     id: acPopup
-    property string room: ""
+    property string room: "Jadalnia"
+    property string currentMode: "cool" // domyślnie
+    property real initialTemperature: 21.0
+    property bool initialEconomy: false
+    property bool initialPowerful: false
+    property bool initialLowNoise: false
     modal: true; focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
+    enter: Transition {
+        NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
+    }
     width: 400; height: 400
-    background: Rectangle { color: "#555555AA"; radius: 10 }
+    background: Rectangle { color: "#4f6c7d"; radius: 10; opacity: 0.9}
 
     Component.onCompleted: {
         acPopup.x = (parent.width - acPopup.width) / 2
         acPopup.y = (parent.height - acPopup.height) / 2
+        backend.get_mode_operation(room)
+        backend.get_target_temp(room)
+        backend.get_economy(room)
+        backend.get_powerful(room)
+        backend.get_low_noise(room)
     }
 
     ColumnLayout {
@@ -19,111 +34,169 @@ Popup {
         anchors.margins: 16
         spacing: 16
 
+        // Tu wstawiamy nasz Dial
         Item {
+            id: dialItem
             width: 150; height: 150
             Layout.alignment: Qt.AlignHCenter
 
-            Dial {
-                id: tempDial
-                from: 16; to: 30; stepSize: 0.5; snapMode: Dial.SnapAlways
-                value: from
-                implicitWidth: parent.width; implicitHeight: parent.height
-                onMoved: backend.set_target_temp(room, value)
+          Dial {
+    id: control
+    from: 10
+    to: 30
+    stepSize: 0.5
+    snapMode: Dial.SnapAlways
 
-                // Tarcza i pointer w Background
-                background: Canvas {
-                    anchors.fill: parent
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        ctx.clearRect(0, 0, width, height);
-                        var cx = width / 2, cy = height / 2, r = cx - 6;
-                        // Tło tarczy
-                        ctx.lineWidth = 4; ctx.strokeStyle = "#777777";
-                        ctx.beginPath(); ctx.arc(cx, cy, r, 0, 2 * Math.PI); ctx.stroke();
-                    }
-                }
+    background: Rectangle {
+        x: control.width / 2 - width / 2
+        y: control.height / 2 - height / 2
+        implicitWidth: 140
+        implicitHeight: 140
+        width: Math.max(64, Math.min(control.width, control.height))
+        height: width
+        color: "transparent"
+        radius: width / 2
+        border.color: control.pressed ? "#d9e8e9" : "#e9f4f5"
+        opacity: control.enabled ? 1 : 0.3
 
-                // Zmienna dla obliczeń
-                property real angle: (tempDial.value - tempDial.from) / (tempDial.to - tempDial.from) * 2 * Math.PI - Math.PI / 2
 
-                // Animacja dla wskazówki (pointer)
-                property real pointerAngle: angle
-                Behavior on pointerAngle {
-                    NumberAnimation { duration: 200; easing.type: Easing.InOutQuad }
-                }
+    }
 
-                // Nowoczesny handle
-                handle: Canvas {
-                    id: dialHandle
-                    implicitWidth: 16; implicitHeight: 16
-                    onPaint: {
-                        var ctx = getContext("2d");
-                        ctx.clearRect(0, 0, width, height);
-                        ctx.fillStyle = "#17a81a";
-                        ctx.beginPath();
-                        ctx.moveTo(width / 2, 0);
-                        ctx.lineTo(0, height);
-                        ctx.lineTo(width, height);
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-                }
 
-                // Wskazówka
-                Item {
-                    width: 16; height: 16
-                    anchors.centerIn: parent
-                    Rotation {
-                        id: pointerRotation
-                        angle: tempDial.pointerAngle
-                        origin.x: parent.width / 2
-                        origin.y: parent.height / 2
-                    }
-                    Canvas {
-                        anchors.fill: parent
-                        onPaint: {
-                            var ctx = getContext("2d");
-                            ctx.clearRect(0, 0, width, height);
-                            ctx.fillStyle = "#17a81a";
-                            ctx.beginPath();
-                            ctx.moveTo(width / 2, 0);
-                            ctx.lineTo(0, height);
-                            ctx.lineTo(width, height);
-                            ctx.closePath();
-                            ctx.fill();
-                        }
-                    }
-                }
-
-                // Wyświetlenie wartości w środku
-                contentItem: Label {
-                    anchors.centerIn: parent
-                    text: tempDial.value.toFixed(1) + "°C"
-                    color: "white"; font.pixelSize: 18
-                }
+    handle: Rectangle {
+        id: handleItem
+        x: control.background.x + control.background.width / 2 - width / 2
+        y: control.background.y + control.background.height / 2 - height / 2
+        width: 16
+        height: 16
+        color: control.pressed ? "#d9e8e9" : "#e9f4f5"
+        radius: 8
+        antialiasing: true
+        opacity: control.enabled ? 1 : 0.3
+        transform: [
+            Translate {
+                y: -Math.min(control.background.width, control.background.height) * 0.4 + handleItem.height / 2
+            },
+            Rotation {
+                angle: control.angle
+                origin.x: handleItem.width / 2
+                origin.y: handleItem.height / 2
             }
-        }
+        ]
+    }
 
-        // Tryb pracy
+
+        // teraz contentItem prawidłowo centr@!
+        contentItem: Text {
+            text: control.value.toFixed(1) + "°C"
+            font.pixelSize: 18; color: "white"
+            anchors.centerIn: parent
+            // jeśli nadal nieco wisi, dodaj offset:
+            anchors.horizontalCenterOffset: 50
+            anchors.verticalCenterOffset: 57
+        }
+    }
+        Glow {
+        anchors.fill: dialItem
+        spread: 0.2
+        source: control
+        radius: 4
+        samples: 32
+
+color: currentMode === "heat" ? "#ff4444"
+        : currentMode === "cool" ? "#448aff"
+        : currentMode === "dry" ? "#ffcc00"
+        : currentMode === "fan" ? "#aaaaaa"
+        : "#21be2b" // domyślny kolor
+
+    }
+}
+
+        // reszta Twojego layoutu…
         RowLayout {
             spacing: 10; Layout.fillWidth: true
             Label { text: "Tryb:"; color: "white"; font.pixelSize: 14 }
-            ComboBox { model: ["cool","heat","dry","fan","auto"]; onCurrentTextChanged: backend.set_mode_operation(room, currentText) }
+            ComboBox {
+                model: ["cool","heat","dry","fan","auto"]
+                onCurrentTextChanged: {
+                currentMode = currentText
+                backend.set_mode_operation(room, currentText)
+
+                }
+
+            }
         }
 
-        // Tryby Econ/Power
+        ColumnLayout {
+                spacing: 8
+                Layout.fillWidth: true
+
         RowLayout {
             spacing: 8; Layout.fillWidth: true
-            CheckBox { id: econBox; onCheckedChanged: backend.set_economy(room, checked) }
-            Label { text: "Tryb ekonomiczny"; color: econBox.checked ? "#17a81a" : "white"; font.pixelSize: 14 }
+
+
+            CheckBox {
+             id: econBox
+             onCheckedChanged: backend.set_economy(room, checked)
+             }
+            Label { text: "Tryb ekonomiczny"; color: econBox.checked ? "#86AD7F" : "white"; font.pixelSize: 14 }
+            }
+        RowLayout {
+            spacing: 8; Layout.fillWidth: true
             CheckBox { id: powerBox; onCheckedChanged: backend.set_powerful(room, checked) }
-            Label { text: "Power Mode"; color: powerBox.checked ? "#17a81a" : "white"; font.pixelSize: 14 }
+            Label { text: "Power Mode"; color: powerBox.checked ? "#AD907F" : "white"; font.pixelSize: 14 }
+        }
+        RowLayout {
+            spacing: 8; Layout.fillWidth: true
+            CheckBox { id: lowNoiseBox; onCheckedChanged: backend.set_powerful(room, checked) }
+            Label { text: "Low Noise Outdoor"; color: lowNoiseBox.checked ? "#AD7F9D" : "white"; font.pixelSize: 14 }
+        }
         }
 
-        // Spacer
         Item { Layout.fillHeight: true }
-
-        // Przycisk Zamknij
-        Button { text: "Zamknij"; font.pixelSize: 16; Layout.alignment: Qt.AlignHCenter; onClicked: acPopup.close() }
+        Button {
+        text: "Set"
+        font.pixelSize: 16
+        Layout.alignment: Qt.AlignHCenter
+        background: Rectangle{
+        color: "#8C99A0"
+        radius: 4}
+        onClicked: {
+            backend.set_temperature(room, control.value)
+            backend.set_mode_operation(room, currentMode)
+            backend.set_economy(room, econBox.checked)
+            backend.set_powerful(room, powerBox.checked)
+            backend.set_low_noise(room, lowNoiseBox.checked)
+ }
     }
+
+}
+Connections {
+    target: backend
+
+    function onModeReceived(mode) {
+        currentMode = mode
+    }
+
+    function onTargetTemperatureReceived(temperature) {
+        initialTemperature = temperature
+        control.value = temperature
+    }
+
+    function onEconomyReceived(value) {
+        initialEconomy = value
+        econBox.checked = value
+    }
+
+    function onPowerfulReceived(value) {
+        initialPowerful = value
+        powerBox.checked = value
+    }
+
+    function onLowNoiseReceived(value) {
+        initialLowNoise = value
+        lowNoiseBox.checked = value
+    }
+}
+
 }
