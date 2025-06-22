@@ -5,8 +5,8 @@ import Qt5Compat.GraphicalEffects
 
 Popup {
     id: acPopup
-    property string room: "Jadalnia"
-    property string currentMode: "cool" // domyślnie
+    property string room: ""
+    property string currentMode: "" // domyślnie
     property real initialTemperature: 21.0
     property bool initialEconomy: false
     property bool initialPowerful: false
@@ -19,7 +19,7 @@ Popup {
     width: 400; height: 400
     background: Rectangle { color: "#4f6c7d"; radius: 10; opacity: 0.9}
 
-    Component.onCompleted: {
+    onOpened: {
         acPopup.x = (parent.width - acPopup.width) / 2
         acPopup.y = (parent.height - acPopup.height) / 2
         backend.get_mode_operation(room)
@@ -107,6 +107,7 @@ color: currentMode === "heat" ? "#ff4444"
         : currentMode === "cool" ? "#448aff"
         : currentMode === "dry" ? "#ffcc00"
         : currentMode === "fan" ? "#aaaaaa"
+        : currentMode === "off" ? "#201C1D"
         : "#21be2b" // domyślny kolor
 
     }
@@ -114,13 +115,22 @@ color: currentMode === "heat" ? "#ff4444"
 
         // reszta Twojego layoutu…
         RowLayout {
+
             spacing: 10; Layout.fillWidth: true
-            Label { text: "Tryb:"; color: "white"; font.pixelSize: 14 }
+            Label { text: "Tryb:"; color: "white"; font.pixelSize: 16 }
             ComboBox {
-                model: ["cool","heat","dry","fan","auto"]
+                id: modeList
+                model: ["cool","heat","dry","fan","auto", "off"]
+
+            Binding {
+            target: modeList
+            property: "currentIndex"
+            value: modeList.model.indexOf(acPopup.currentMode)
+            when: acPopup.currentMode !== ""
+}
+
                 onCurrentTextChanged: {
                 currentMode = currentText
-                backend.set_mode_operation(room, currentText)
 
                 }
 
@@ -137,18 +147,18 @@ color: currentMode === "heat" ? "#ff4444"
 
             CheckBox {
              id: econBox
-             onCheckedChanged: backend.set_economy(room, checked)
+
              }
             Label { text: "Tryb ekonomiczny"; color: econBox.checked ? "#86AD7F" : "white"; font.pixelSize: 14 }
             }
         RowLayout {
             spacing: 8; Layout.fillWidth: true
-            CheckBox { id: powerBox; onCheckedChanged: backend.set_powerful(room, checked) }
+            CheckBox { id: powerBox; }
             Label { text: "Power Mode"; color: powerBox.checked ? "#AD907F" : "white"; font.pixelSize: 14 }
         }
         RowLayout {
             spacing: 8; Layout.fillWidth: true
-            CheckBox { id: lowNoiseBox; onCheckedChanged: backend.set_powerful(room, checked) }
+            CheckBox { id: lowNoiseBox;}
             Label { text: "Low Noise Outdoor"; color: lowNoiseBox.checked ? "#AD7F9D" : "white"; font.pixelSize: 14 }
         }
         }
@@ -174,27 +184,35 @@ color: currentMode === "heat" ? "#ff4444"
 Connections {
     target: backend
 
-    function onModeReceived(mode) {
+    function onModeReceived(room, mode) {
         currentMode = mode
-    }
+        console.log(mode)
 
-    function onTargetTemperatureReceived(temperature) {
+
+}
+
+
+    function onTargetTemperatureReceived(room, temperature) {
         initialTemperature = temperature
+        console.log(temperature)
         control.value = temperature
     }
 
-    function onEconomyReceived(value) {
+    function onEconomyReceived(room, value) {
         initialEconomy = value
+        console.log(value)
         econBox.checked = value
     }
 
-    function onPowerfulReceived(value) {
+    function onPowerfulReceived(room, value) {
         initialPowerful = value
+        console.log(value)
         powerBox.checked = value
     }
 
-    function onLowNoiseReceived(value) {
+    function onLowNoiseReceived(room, value) {
         initialLowNoise = value
+        console.log(value)
         lowNoiseBox.checked = value
     }
 }
