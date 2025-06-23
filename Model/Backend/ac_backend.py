@@ -1,5 +1,5 @@
 import asyncio
-
+import ariston
 from PySide6.QtCore import QObject, Signal, Property
 from qasync import asyncSlot
 from Model.AC.AC_Control import ACUnit
@@ -10,17 +10,25 @@ password = "F5eotvky"
 country = "PL"
 
 class Backend(QObject):
-    tempIndoorChanged = Signal(str, float)
 
+    # AC Signals
+    tempIndoorChanged = Signal(str, float)
     modeReceived = Signal(str, str)
     targetTemperatureReceived = Signal(str, float)
     economyReceived = Signal(str, bool)
     powerfulReceived = Signal(str, bool)
     lowNoiseReceived = Signal(str, bool)
+
+    # Boiler Signals
+    waterTemp = Signal(float)
+
     def __init__(self):
         super().__init__()
         self.salon = None
         self.jadalnia = None
+        self.boiler = None
+        self.user = "antekmigala@gmail.com"
+        self.pwd = "F5eotvky!"
 
     async def init_ac_units(self):
         api = ApiCloud(username=username, password=password, country=country)
@@ -30,7 +38,15 @@ class Backend(QObject):
         await self.jadalnia.refresh_parameters()
         await self.salon.refresh_parameters()
         print("Jednostki klimatyzacji gotowe!")
+        await ariston._async_connect(self.user, self.pwd)
+        self.boiler = await ariston.async_hello(self.user, self.pwd, "A842E373D878", True, "en-US")
+        await self.boiler.async_get_features()
+        await self.boiler.async_update_state()
+        await self.boiler.async_update_energy()
 
+    """
+    AC Units functions sections starts
+    """
     @asyncSlot(str)
     async def turn_on_ac(self, room):
         match room:
@@ -157,6 +173,23 @@ class Backend(QObject):
                 await self.salon.set_operation_mode(self, mode)
             case "Jadalnia":
                 await self.jadalnia.set_operation_mode(self, mode)
+
+    """
+       Boiler functions sections starts
+    """
+
+    @asyncSlot(str)
+    async def set_water_target_temp(self, temp: float):
+        await self.boiler.async_set_lydos_temperature(temp)
+
+    @asyncSlot()
+    async def get_water_temp(self):
+        temp = self.boiler.water_heater_current_temperature
+        self.waterTemp.emit(temp)
+
+    @asyncSlot(str)
+    async def set_water_mode(self, mode: int):
+        await self.boiler.set_lydos_mode(mode)
 
 async def main():
     x = Backend()

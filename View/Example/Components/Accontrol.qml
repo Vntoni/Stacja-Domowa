@@ -4,7 +4,9 @@ import QtQuick.Layouts 1.15
 import QtQuick.Controls.Basic 2.15
 
 Rectangle{
-    property real currentTemp: NaN
+    property real currentTempSalon: NaN
+    property real currentTempJadalnia: NaN
+    property real currentTempBoiler: NaN
 
 RowLayout {
     spacing: 20
@@ -33,7 +35,7 @@ Rectangle {
    }
    // Wartość temperatury
    Label {
-       text: currentTemp.toFixed(1) + "°C"
+       text: currentTempSalon.toFixed(1) + "°C"
        color: "#17a81a"      // zielony, żeby odróżnić
        font.pixelSize: 18
        anchors.top: parent.top
@@ -121,7 +123,7 @@ Rectangle {
     target: backend
     function onTempIndoorChanged(roomName, temperature) {
         if (roomName === salonRect.room) {
-            currentTemp = temperature
+            currentTempSalon = temperature
         }
     }
 }
@@ -150,7 +152,7 @@ Rectangle {
    }
    // Wartość temperatury
    Label {
-       text: currentTemp.toFixed(1) + "°C"
+       text: currentTempJadalnia.toFixed(1) + "°C"
        color: "#17a81a"      // zielony, żeby odróżnić
        font.pixelSize: 18
        anchors.top: parent.top
@@ -238,13 +240,128 @@ Rectangle {
     target: backend
     function onTempIndoorChanged(roomName, temperature) {
         if (roomName === jadalniaRect.room) {
-            currentTemp = temperature
+            currentTempJadalnia = temperature
         }
+    }
+}
+}
+
+Rectangle {
+    id: boilerRect
+    width: 200
+    height: 200
+    color: "#222"
+    radius: 10
+    border.color: "white"
+    border.width: 1
+    property string room: "Boiler"
+    signal clicked(string room)
+
+
+   // Etykieta opisująca temperaturę
+   Label {
+       text: qsTr("Temperatura Wody")
+       color: "white"
+       font.pixelSize: 14
+       anchors.top: parent.top
+       anchors.horizontalCenter: parent.horizontalCenter
+       anchors.topMargin: 8
+   }
+   // Wartość temperatury
+   Label {
+       text: currentTempBoiler.toFixed(1) + "°C"
+       color: "#17a81a"      // zielony, żeby odróżnić
+       font.pixelSize: 18
+       anchors.top: parent.top
+       anchors.horizontalCenter: parent.horizontalCenter
+       anchors.topMargin: 28
+   }
+
+   MultiPointTouchArea {
+    anchors.fill: parent
+    minimumTouchPoints: 1
+    maximumTouchPoints: 1
+
+    property double lastTapTime: 0
+    property double doubleTapThreshold: 400 // ms
+
+    onPressed: {
+        var currentTime = Date.now();
+        if (currentTime - lastTapTime < doubleTapThreshold) {
+            // Double tap detected
+            waterHeaterPopup.open();
+        }
+        lastTapTime = currentTime;
+    }
+    }
+    ColumnLayout {
+        anchors.fill: parent
+        anchors.topMargin: 50
+        spacing: 10
+
+        Label {
+            text: "Boiler"
+            font.pixelSize: 20
+            color: "white"
+            horizontalAlignment: Text.AlignHCenter
+            Layout.alignment: Qt.AlignHCenter
+        }
+
+
+        Switch {
+    id: boilerControl
+    text: qsTr("ON/OFF")
+    onToggled:{
+    boilerControl.checked ? backend.turn_on_ac('Boiler'):
+    backend.turn_off_ac('Boiler')
+    }
+
+    indicator: Rectangle {
+        implicitWidth: 48
+        implicitHeight: 26
+        x: boilerControl.leftPadding
+        y: parent.height / 2 - height / 2
+        radius: 13
+        color: boilerControl.checked ? "#17a81a" : "#ffffff"
+        border.color: boilerControl.checked ? "#17a81a" : "#cccccc"
+
+        Rectangle {
+            x: boilerControl.checked ? parent.width - width : 0
+            width: 26
+            height: 26
+            radius: 13
+            color: boilerControl.down ? "#cccccc" : "#ffffff"
+            border.color: boilerControl.checked ? (boilerControl.down ? "#17a81a" : "#21be2b") : "#999999"
+        }
+    }
+
+    contentItem: Text {
+        text: boilerControl.text
+        font: boilerControl.font
+        opacity: enabled ? 1.0 : 0.3
+        color: boilerControl.down ? "#17a81a" : "#21be2b"
+        verticalAlignment: Text.AlignVCenter
+        leftPadding: boilerControl.indicator.width + boilerControl.spacing
+    }
+}
+    }
+    Timer {
+        id: tempTimerBoiler
+        interval: 5000; running: true; repeat: true
+        onTriggered: backend.get_water_temp()
+    }
+
+    // Połącz sygnał temperatury
+   Connections {
+    target: backend
+    function onWaterTemp(temperature) {
+        currentTempBoiler = temperature
     }
 }
 }
 }
 }
+
 
 
 

@@ -14,6 +14,7 @@ ApplicationWindow {
     Material.theme: Material.Dark
 
     ACControlPopup { id: acPopup }
+    WaterHeaterControlPopup {id: waterHeaterPopup}
 
     ColumnLayout {
         anchors.fill: parent
