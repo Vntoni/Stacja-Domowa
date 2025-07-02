@@ -10,9 +10,10 @@ Popup {
     property string currentMode: "" // domyślnie
     property real initialTemperature: 65
     property real waterTemp: 40
-    property bool initialEconomy: false
-    property bool initialPowerful: false
-    property bool initialLowNoise: false
+    property bool initialGreen: false
+    property bool initialBoost: false
+    property bool initialMemory: false
+    property bool initialProgram: false
     modal: true; focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     enter: Transition {
@@ -26,6 +27,10 @@ Popup {
         waterHeaterPopup.y = (parent.height - waterHeaterPopup.height) / 2
         backend.get_water_target_temp()
         backend.get_water_temp()
+        backend.get_water_heater_mode()
+        backend.get_water_heater_power()
+
+
     }
 
     ColumnLayout {
@@ -134,7 +139,7 @@ Popup {
 
     // Memory Mode
     Button {
-        id: powerButton
+        id: memoryButton
         checkable: true
         text: checked ? "Memory Mode: ON" : "Memory Mode: OFF"
         font.pixelSize: 16
@@ -142,7 +147,7 @@ Popup {
         height: 50
         ButtonGroup.group: modeButton
         background: Rectangle {
-            color: powerButton.checked ? "#AD907F" : "#4f6c7d"
+            color: memoryButton.checked ? "#AD907F" : "#4f6c7d"
             radius: 8
         }
 
@@ -204,7 +209,24 @@ Connections {
         function onWaterTemp(boiler, waterTemperature){
             waterTemp = waterTemperature
         }
+        function  onModeOperating(mode){
+            currentMode  = mode
+            if (currentMode === "GREEN"){
+                econButton.checked = true;
+            }
+            else if (currentMode === "IMEMORY"){
+                memoryButton.checked = true;
+            }
+            else if (currentMode === "PROGRAM"){
+                programButton.checked = true;
+            }
+            else if (currentMode === "BOOST"){
+                boostButton.checked = true;
+            }
+        }
+    function onPowerStatus(power){
 
+    }
 }
 MessageDialog {
             id: messageDialog

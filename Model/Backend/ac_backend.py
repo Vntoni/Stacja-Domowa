@@ -21,6 +21,8 @@ class Backend(QObject):
 
     # Boiler Signals
     waterTemp = Signal(str, float)
+    modeOperating = Signal(str)
+    powerStatus = Signal(bool)
 
     def __init__(self):
         super().__init__()
@@ -177,6 +179,14 @@ class Backend(QObject):
     """
        Boiler functions sections starts
     """
+    @asyncSlot(float)
+    async def set_water_heater_power(self, power: bool):
+        await self.boiler.async_set_power(power)
+
+    @asyncSlot(float)
+    async def get_water_heater_power(self):
+        power = self.boiler.water_heater_power_value
+        self.powerStatus.emit(power)
 
     @asyncSlot(float)
     async def set_water_target_temp(self, temp: float):
@@ -189,8 +199,8 @@ class Backend(QObject):
 
     @asyncSlot()
     async def get_water_heater_mode(self):
-        await self.boiler.water_heater_mode()
-
+        mode = self.boiler.water_heater_current_mode_text
+        self.modeOperating.emit(mode)
 
     @asyncSlot()
     async def get_water_temp(self):

@@ -37,6 +37,6 @@ if __name__ == "__main__":
     print(b.device.water_heater_mode_value)
     print(b.device.water_heater_current_mode_text)
     print(b.device.water_heater_mode_operation_texts)
-
+    print(b.device.water_heater_power_value)
     # print("Energy:  ", b.energy)
     pass
