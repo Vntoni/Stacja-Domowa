@@ -25,11 +25,18 @@ class Boiler:
         await self.device.async_update_state()
         await self.device.async_update_energy()
 
+    async def set(self):
+        await self.device.async_set_lydos_temperature("A842E373D878", 45.0)
+
 if __name__ == "__main__":
     b = Boiler("antekmigala@gmail.com", "F5eotvky!", "A842E373D878")
     # print(b.info)
     print("Features:", b.features)
     print(b.device.water_heater_current_temperature)
-    # print("State:   ", b.state)
+    print(b.device.water_heater_target_temperature)
+    print(b.device.water_heater_mode_value)
+    print(b.device.water_heater_current_mode_text)
+    print(b.device.water_heater_mode_operation_texts)
+
     # print("Energy:  ", b.energy)
     pass

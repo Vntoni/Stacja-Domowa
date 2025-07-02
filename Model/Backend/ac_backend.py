@@ -20,7 +20,7 @@ class Backend(QObject):
     lowNoiseReceived = Signal(str, bool)
 
     # Boiler Signals
-    waterTemp = Signal(float)
+    waterTemp = Signal(str, float)
 
     def __init__(self):
         super().__init__()
@@ -178,24 +178,42 @@ class Backend(QObject):
        Boiler functions sections starts
     """
 
-    @asyncSlot(str)
+    @asyncSlot(float)
     async def set_water_target_temp(self, temp: float):
-        await self.boiler.async_set_lydos_temperature(temp)
+        await self.boiler.async_set_water_heater_temperature(temp)
+
+    @asyncSlot()
+    async def get_water_target_temp(self):
+        temperature = self.boiler.water_heater_target_temperature
+        self.targetTemperatureReceived.emit("boiler", temperature)
+
+    @asyncSlot()
+    async def get_water_heater_mode(self):
+        await self.boiler.water_heater_mode()
+
 
     @asyncSlot()
     async def get_water_temp(self):
         temp = self.boiler.water_heater_current_temperature
-        self.waterTemp.emit(temp)
+        self.waterTemp.emit("boiler", temp)
 
-    @asyncSlot(str)
+    @asyncSlot(int)
     async def set_water_mode(self, mode: int):
-        await self.boiler.set_lydos_mode(mode)
+        await self.boiler.async_set_water_heater_operation_mode(mode)
+
+    @asyncSlot()
+    async def update_water_heater_data(self):
+        await self.boiler.async_update_state()
+        await self.boiler.async_update_energy()
+
 
 async def main():
     x = Backend()
     await x.init_ac_units()
     await x.jadalnia.refresh_parameters()
     await x.salon.refresh_parameters()
+    # print(dir(x.boiler))
+    # await x.set_water_target_temp(45.0)
     pass
 
 asyncio.run(main())

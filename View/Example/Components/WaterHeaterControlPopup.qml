@@ -9,6 +9,7 @@ Popup {
     property string room: ""
     property string currentMode: "" // domyślnie
     property real initialTemperature: 65
+    property real waterTemp: 40
     property bool initialEconomy: false
     property bool initialPowerful: false
     property bool initialLowNoise: false
@@ -23,6 +24,8 @@ Popup {
     onOpened: {
         waterHeaterPopup.x = (parent.width - waterHeaterPopup.width) / 2
         waterHeaterPopup.y = (parent.height - waterHeaterPopup.height) / 2
+        backend.get_water_target_temp()
+        backend.get_water_temp()
     }
 
     ColumnLayout {
@@ -42,6 +45,7 @@ Popup {
     to: 65
     stepSize: 1
     snapMode: Dial.SnapAlways
+    value: initialTemperature
 
     background: Rectangle {
         x: control.width / 2 - width / 2
@@ -105,7 +109,9 @@ Popup {
 }
 
         // reszta Twojego layoutu
-
+    ButtonGroup {
+        id: modeButton
+        }
        ColumnLayout {
     spacing: 8
     Layout.fillWidth: true
@@ -113,46 +119,62 @@ Popup {
     // Tryb ekonomiczny
     Button {
         id: econButton
-        property bool isChecked: false
+        checkable :true
         text: checked ? "Tryb ekonomiczny: ON" : "Tryb ekonomiczny: OFF"
         font.pixelSize: 16
         Layout.fillWidth: true
         height: 50
+        ButtonGroup.group: modeButton
         background: Rectangle {
             color: econButton.checked ? "#86AD7F" : "#4f6c7d"
             radius: 8
         }
-        onClicked: checked = !checked
+
     }
 
     // Memory Mode
     Button {
         id: powerButton
-        property bool isChecked: false
+        checkable: true
         text: checked ? "Memory Mode: ON" : "Memory Mode: OFF"
         font.pixelSize: 16
         Layout.fillWidth: true
         height: 50
+        ButtonGroup.group: modeButton
         background: Rectangle {
             color: powerButton.checked ? "#AD907F" : "#4f6c7d"
             radius: 8
         }
-        onClicked: checked = !checked
+
     }
 
     // Boost Mode
     Button {
         id: boostButton
-        property bool isChecked: false
+        checkable: true
         text: checked ? "Boost Mode: ON" : "Boost Mode: OFF"
         font.pixelSize: 16
         Layout.fillWidth: true
         height: 50
+        ButtonGroup.group: modeButton
         background: Rectangle {
             color: boostButton.checked ? "#AD7F9D" : "#4f6c7d"
             radius: 8
         }
-        onClicked: checked = !checked
+
+    }
+    Button {
+        id: programButton
+        checkable: true
+        text: checked ? "Program Mode: ON" : "Program Mode: OFF"
+        font.pixelSize: 16
+        Layout.fillWidth: true
+        height: 50
+        ButtonGroup.group: modeButton
+        background: Rectangle {
+            color: programButton.checked ? "#ad7f86" : "#4f6c7d"
+            radius: 8
+        }
     }
 
     Item { Layout.fillHeight: true }
@@ -176,7 +198,12 @@ Popup {
 Connections {
     target: backend
 
-
+        function onTargetTemperatureReceived(boiler, temperature){
+            initialTemperature = temperature
+        }
+        function onWaterTemp(boiler, waterTemperature){
+            waterTemp = waterTemperature
+        }
 
 }
 MessageDialog {

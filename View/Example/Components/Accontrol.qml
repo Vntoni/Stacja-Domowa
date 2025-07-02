@@ -354,7 +354,7 @@ Rectangle {
     // Połącz sygnał temperatury
    Connections {
     target: backend
-    function onWaterTemp(temperature) {
+    function onWaterTemp(boiler, temperature) {
         currentTempBoiler = temperature
     }
 }
