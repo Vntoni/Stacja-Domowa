@@ -27,9 +27,9 @@ async def main():
     loop = QEventLoop(app)
     asyncio.set_event_loop(loop)
 
+    backend = Backend()
 
     engine = QQmlApplicationEngine()
-    backend = Backend()
     engine.rootContext().setContextProperty("backend", backend)
     engine.addImportPath(sys.path[0])
     engine.loadFromModule("Example", "main")

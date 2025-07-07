@@ -11,6 +11,7 @@ country = "PL"
 
 class Backend(QObject):
 
+    ready = Signal(bool)
     # AC Signals
     tempIndoorChanged = Signal(str, float)
     modeReceived = Signal(str, str)
@@ -45,6 +46,7 @@ class Backend(QObject):
         await self.boiler.async_get_features()
         await self.boiler.async_update_state()
         await self.boiler.async_update_energy()
+        self.ready.emit(True)
 
     """
     AC Units functions sections starts
@@ -166,7 +168,7 @@ class Backend(QObject):
                 mode = self.jadalnia.get_operating_mode()
                 print(mode)
                 print(type(mode))
-        self.modeReceived.emit(room, mode.value.lower())
+        self.modeReceived.emit(room, mode.value.upper())
 
     @asyncSlot(str)
     async def set_mode_operation(self, room, mode: int):
@@ -183,7 +185,7 @@ class Backend(QObject):
     async def set_water_heater_power(self, power: bool):
         await self.boiler.async_set_power(power)
 
-    @asyncSlot(float)
+    @asyncSlot()
     async def get_water_heater_power(self):
         power = self.boiler.water_heater_power_value
         self.powerStatus.emit(power)
@@ -222,8 +224,8 @@ async def main():
     await x.init_ac_units()
     await x.jadalnia.refresh_parameters()
     await x.salon.refresh_parameters()
-    # print(dir(x.boiler))
+    print(dir(x.salon))
     # await x.set_water_target_temp(45.0)
     pass
 
-asyncio.run(main())
+# asyncio.run(main())
