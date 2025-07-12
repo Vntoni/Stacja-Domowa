@@ -103,6 +103,15 @@ Popup {
                       : "#66B67A"
             }
         }
+        DropShadow {
+        anchors.fill: modeButtons
+        horizontalOffset: 1
+        verticalOffset: 2
+        radius: 2.0
+        color: "#4e4a4a"
+        source: modeButtons
+    }
+
 
         // === PRZYCISKI TRYBU ===
         RowLayout {
@@ -121,6 +130,7 @@ Popup {
     ]
 
     delegate: Button {
+        id: buttonShadow
         text: modelData.label
         checkable: true
         checked: currentMode === modelData.label
@@ -131,11 +141,13 @@ Popup {
 
         background: Rectangle {
             radius: 8
-            color: checked ? modelData.color : "#647b88"
+            color: checked ? modelData.color : "#6d8495"
+            border.color: "#cfd8dc"
+            border.width: 1
 
             Behavior on color {
                 ColorAnimation {
-                    duration: 200
+                    duration: 300
                     easing.type: Easing.InOutQuad
                 }
             }
@@ -145,29 +157,92 @@ Popup {
 
         }
 
+
         // === PRZYCISKI OPCJI ===
-        RowLayout {
+        ColumnLayout {
+            id: optionsButtons
             spacing: 12; Layout.alignment: Qt.AlignHCenter
 
-            CheckBox {
-                id: econBox
-                text: "Eco"
-                checked: initialEconomy
-                onToggled: initialEconomy = checked
-            }
-            CheckBox {
-                id: powerBox
-                text: "Boost"
-                checked: initialPowerful
-                onToggled: initialPowerful = checked
-            }
-            CheckBox {
-                id: lowNoiseBox
-                text: "LowNoise"
-                checked: initialLowNoise
-                onToggled: initialLowNoise = checked
-            }
-        }
+                Button {
+                    id: econButton
+                    text: "ECONOMY"
+                    checkable: true
+                    checked: initialEconomy
+                    Layout.fillWidth: true
+                    enabled: !powerButton.checked  // disabled jeśli POWERFUL aktywny
+                    onClicked: {
+                        initialEconomy = checked
+                    }
+                    background: Rectangle {
+                    radius: 8
+                    color: econButton.checked ? "#7ab666" : "#7893a3"
+                    border.color: "#a7c0cd"
+                    border.width: 1
+                    Behavior on color { ColorAnimation { duration: 300 } }
+                    }
+                    }
+                    // POWERFUL
+                Button {
+                    id: powerButton
+                    text: "POWERFUL"
+                    checkable: true
+                    checked: initialPowerful
+                    Layout.fillWidth: true
+                    onClicked: {
+                        if (checked) {
+                            // Wyłącz inne
+                            econButton.checked = false
+                            lowNoiseButton.checked = false
+                            initialEconomy = false
+                            initialLowNoise = false
+                        }
+                        initialPowerful = checked
+                    }
+
+                    background: Rectangle {
+                        radius: 8
+                        color: powerButton.checked ? "#ca322c" : "#7893a3"
+                        border.color: "#a7c0cd"
+                        border.width: 1
+                        Behavior on color { ColorAnimation { duration: 300 } }
+                    }
+                }
+
+                    // LOW NOISE
+                    Button {
+                        id: lowNoiseButton
+                        text: "LOW NOISE"
+                        checkable: true
+                        checked: initialLowNoise
+                        Layout.fillWidth: true
+                        enabled: !powerButton.checked  // disabled jeśli POWERFUL aktywny
+                        onClicked: {
+                            initialLowNoise = checked
+                        }
+
+                        background: Rectangle {
+                            radius: 8
+                            color: lowNoiseButton.checked ? "#8d8d8d" : "#7893a3"
+                            border.color: "#a7c0cd"
+                            border.width: 1
+                            Behavior on color { ColorAnimation { duration: 300 } }
+                        }
+                    }
+
+            DropShadow {
+        anchors.fill: optionsButtons
+        horizontalOffset: 3
+        verticalOffset: 3
+        radius: 4.0
+        color: "#80000000"
+        source: optionsButtons
+    }
+                }
+
+
+
+
+
 
         Item { Layout.fillHeight: true }
 
@@ -188,6 +263,8 @@ Popup {
             }
         }
     }
+
+
 
     Connections {
         target: backend
