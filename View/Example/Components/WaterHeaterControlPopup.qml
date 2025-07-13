@@ -1,36 +1,40 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
+import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
-import Qt5Compat.GraphicalEffects
-import QtQuick.Dialogs
 
 Popup {
     id: waterHeaterPopup
+    Material.theme: Material.Dark
+    Material.accent: Material.BlueGrey
+
     property string room: ""
-    property string currentMode: "" // domyślnie
+    property string currentMode: ""
     property real initialTemperature: 65
     property real waterTemp: 40
     property bool initialGreen: false
     property bool initialBoost: false
     property bool initialMemory: false
     property bool initialProgram: false
-    modal: true; focus: true
+
+    modal: true
+    focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    enter: Transition {
-        NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
+    width: 400
+    height: 460
+
+    background: Rectangle {
+        color: Material.background
+        radius: 10
     }
-    width: 400; height: 400
-    background: Rectangle { color: "#7d4f6c"; radius: 10; opacity: 0.9}
 
     onOpened: {
-        waterHeaterPopup.x = (parent.width - waterHeaterPopup.width) / 2
-        waterHeaterPopup.y = (parent.height - waterHeaterPopup.height) / 2
+        waterHeaterPopup.x = (parent.width - width) / 2
+        waterHeaterPopup.y = (parent.height - height) / 2
         backend.get_water_target_temp()
         backend.get_water_temp()
         backend.get_water_heater_mode()
         backend.get_water_heater_power()
-
-
     }
 
     ColumnLayout {
@@ -38,205 +42,180 @@ Popup {
         anchors.margins: 16
         spacing: 16
 
-        // Tu wstawiamy nasz Dial
+        // === DIAL ===
         Item {
-            id: dialItem
-            width: 150; height: 150
-            Layout.alignment: Qt.AlignHCenter
+    Layout.preferredWidth: 150
+    Layout.preferredHeight: 150
+    Layout.alignment: Qt.AlignHCenter
 
-          Dial {
-    id: control
-    from: 40
-    to: 65
-    stepSize: 1
-    snapMode: Dial.SnapAlways
-    value: initialTemperature
+    Dial {
+        id: control
+        anchors.fill: parent
+        from: 10
+        to: 30
+        stepSize: 0.5
+        snapMode: Dial.SnapAlways
 
-    background: Rectangle {
-        x: control.width / 2 - width / 2
-        y: control.height / 2 - height / 2
-        implicitWidth: 140
-        implicitHeight: 140
-        width: Math.max(64, Math.min(control.width, control.height))
-        height: width
-        color: "transparent"
-        radius: width / 2
-        border.color: control.pressed ? "#d9e8e9" : "#e9f4f5"
-        opacity: control.enabled ? 1 : 0.3
+        // Tło okręgu
+        background: Rectangle {
+            x: control.width / 2 - width / 2
+            y: control.height / 2 - height / 2
+            implicitWidth: 140
+            implicitHeight: 140
+            width: Math.max(64, Math.min(control.width, control.height))
+            height: width
+            color: "transparent"
+            radius: width / 2
+            border.color: control.pressed ? "#d9e8e9" : "#e9f4f5"
+            opacity: control.enabled ? 1 : 0.3
+        }
 
+        // Obracający się uchwyt
+        handle: Rectangle {
+            id: handleItem
+            x: control.background.x + control.background.width / 2 - width / 2
+            y: control.background.y + control.background.height / 2 - height / 2
+            width: 16
+            height: 16
+            color: control.pressed ? "#d9e8e9" : "#e9f4f5"
+            radius: 8
+            antialiasing: true
+            opacity: control.enabled ? 1 : 0.3
 
-    }
+            transform: [
+                Translate {
+                    y: -Math.min(control.background.width, control.background.height) * 0.4 + handleItem.height / 2
+                },
+                Rotation {
+                    angle: control.angle
+                    origin.x: handleItem.width / 2
+                    origin.y: handleItem.height / 2
+                }
+            ]
+        }
 
-
-    handle: Rectangle {
-        id: handleItem
-        x: control.background.x + control.background.width / 2 - width / 2
-        y: control.background.y + control.background.height / 2 - height / 2
-        width: 16
-        height: 16
-        color: control.pressed ? "#d9e8e9" : "#e9f4f5"
-        radius: 8
-        antialiasing: true
-        opacity: control.enabled ? 1 : 0.3
-        transform: [
-            Translate {
-                y: -Math.min(control.background.width, control.background.height) * 0.4 + handleItem.height / 2
-            },
-            Rotation {
-                angle: control.angle
-                origin.x: handleItem.width / 2
-                origin.y: handleItem.height / 2
-            }
-        ]
-    }
-
-
-        // teraz contentItem prawidłowo centr@!
+        // Tekst temperatury
         contentItem: Text {
             text: control.value.toFixed(1) + "°C"
-            font.pixelSize: 18; color: "white"
+            font.pixelSize: 18
+            color: "white"
             anchors.centerIn: parent
-            // jeśli nadal nieco wisi, dodaj offset:
             anchors.horizontalCenterOffset: 50
-            anchors.verticalCenterOffset: 57
-        }
-    }
-        Glow {
-        anchors.fill: dialItem
-        spread: 0.2
-        source: control
-        radius: 4
-        samples: 32
-        color: "#ff4444"
-
-
-    }
-}
-
-        // reszta Twojego layoutu
-    ButtonGroup {
-        id: modeButton
-        }
-       ColumnLayout {
-    spacing: 8
-    Layout.fillWidth: true
-
-    // Tryb ekonomiczny
-    Button {
-        id: econButton
-        checkable :true
-        text: checked ? "Tryb ekonomiczny: ON" : "Tryb ekonomiczny: OFF"
-        font.pixelSize: 16
-        Layout.fillWidth: true
-        height: 50
-        ButtonGroup.group: modeButton
-        background: Rectangle {
-            color: econButton.checked ? "#86AD7F" : "#4f6c7d"
-            radius: 8
-        }
-
-    }
-
-    // Memory Mode
-    Button {
-        id: memoryButton
-        checkable: true
-        text: checked ? "Memory Mode: ON" : "Memory Mode: OFF"
-        font.pixelSize: 16
-        Layout.fillWidth: true
-        height: 50
-        ButtonGroup.group: modeButton
-        background: Rectangle {
-            color: memoryButton.checked ? "#AD907F" : "#4f6c7d"
-            radius: 8
-        }
-
-    }
-
-    // Boost Mode
-    Button {
-        id: boostButton
-        checkable: true
-        text: checked ? "Boost Mode: ON" : "Boost Mode: OFF"
-        font.pixelSize: 16
-        Layout.fillWidth: true
-        height: 50
-        ButtonGroup.group: modeButton
-        background: Rectangle {
-            color: boostButton.checked ? "#AD7F9D" : "#4f6c7d"
-            radius: 8
-        }
-
-    }
-    Button {
-        id: programButton
-        checkable: true
-        text: checked ? "Program Mode: ON" : "Program Mode: OFF"
-        font.pixelSize: 16
-        Layout.fillWidth: true
-        height: 50
-        ButtonGroup.group: modeButton
-        background: Rectangle {
-            color: programButton.checked ? "#ad7f86" : "#4f6c7d"
-            radius: 8
-        }
-    }
-
-    Item { Layout.fillHeight: true }
-
-    // Przycisk "Set"
-    Button {
-        text: "Set"
-        font.pixelSize: 16
-        Layout.alignment: Qt.AlignHCenter
-        background: Rectangle {
-            color: "#8C99A0"
-            radius: 4
-        }
-        onClicked: {
-            messageDialog.open()
+            anchors.verticalCenterOffset: 60
         }
     }
 }
-}
+        // === TRYBY ===
+        ColumnLayout {
+            spacing: 8
+            Layout.fillWidth: true
 
-Connections {
-    target: backend
+            ButtonGroup { id: modeButton }
 
-        function onTargetTemperatureReceived(boiler, temperature){
+            Button {
+                id: econButton
+                checkable: true
+                checked: initialGreen
+                text: "Tryb ekonomiczny"
+                font.pixelSize: 16
+                Layout.fillWidth: true
+                height: 50
+                ButtonGroup.group: modeButton
+
+                Material.background: checked ? "#558B2F" : "#546e7a"
+                Material.foreground: "white"
+                Material.elevation: 2
+            }
+
+            Button {
+                id: memoryButton
+                checkable: true
+                checked: initialMemory
+                text: "Memory Mode"
+                font.pixelSize: 16
+                Layout.fillWidth: true
+                height: 50
+                ButtonGroup.group: modeButton
+
+                Material.background: checked ? "#5C6BC0" : "#546e7a"
+                Material.foreground: "white"
+                Material.elevation: 2
+            }
+
+            Button {
+                id: boostButton
+                checkable: true
+                checked: initialBoost
+                text: "Boost Mode"
+                font.pixelSize: 16
+                Layout.fillWidth: true
+                height: 50
+                ButtonGroup.group: modeButton
+
+                Material.background: checked ? "#F57C00" : "#546e7a"
+                Material.foreground: "white"
+                Material.elevation: 2
+            }
+
+            Button {
+                id: programButton
+                checkable: true
+                checked: initialProgram
+                text: "Program Mode"
+                font.pixelSize: 16
+                Layout.fillWidth: true
+                height: 50
+                ButtonGroup.group: modeButton
+
+                Material.background: checked ? "#039BE5" : "#546e7a"
+                Material.foreground: "white"
+                Material.elevation: 2
+            }
+        }
+
+        Item { Layout.fillHeight: true }
+
+        // === PRZYCISK "SET" ===
+        Button {
+            text: "Set"
+            font.pixelSize: 16
+            Layout.alignment: Qt.AlignHCenter
+            onClicked: {
+                backend.set_water_target_temp(control.value)
+                if (econButton.checked) backend.set_water_heater_mode("GREEN")
+                else if (memoryButton.checked) backend.set_water_heater_mode("IMEMORY")
+                else if (programButton.checked) backend.set_water_heater_mode("PROGRAM")
+                else if (boostButton.checked) backend.set_water_heater_mode("BOOST")
+                messageDialog.open()
+            }
+            Material.background: Material.accent
+            Material.foreground: Material.White
+            Material.elevation: 3
+        }
+    }
+
+    Connections {
+        target: backend
+
+        function onTargetTemperatureReceived(boiler, temperature) {
             initialTemperature = temperature
+            control.value = temperature
         }
-        function onWaterTemp(boiler, waterTemperature){
+
+        function onWaterTemp(boiler, waterTemperature) {
             waterTemp = waterTemperature
         }
-        function  onModeOperating(mode){
-            currentMode  = mode
-            if (currentMode === "GREEN"){
-                econButton.checked = true;
-            }
-            else if (currentMode === "IMEMORY"){
-                memoryButton.checked = true;
-            }
-            else if (currentMode === "PROGRAM"){
-                programButton.checked = true;
-            }
-            else if (currentMode === "BOOST"){
-                boostButton.checked = true;
-            }
-        }
-    function onPowerStatus(power){
 
+        function onModeOperating(mode) {
+            currentMode = mode
+            econButton.checked = mode === "GREEN"
+            memoryButton.checked = mode === "IMEMORY"
+            programButton.checked = mode === "PROGRAM"
+            boostButton.checked = mode === "BOOST"
+        }
+
+        function onPowerStatus(power) {
+            // Możesz dodać logikę jeśli potrzebna
+        }
     }
 }
-MessageDialog {
-            id: messageDialog
-            buttons: MessageDialog.Ok
-            text: "The document has been modified."
-}
-}
-
-
-//IMEMORY = 1
-  //  GREEN = 2
-    //PROGRAM = 6
-    //BOOST = 7
