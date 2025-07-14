@@ -96,8 +96,8 @@ Popup {
             font.pixelSize: 18
             color: "white"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 50
-            anchors.verticalCenterOffset: 60
+            anchors.horizontalCenterOffset: 51
+            anchors.verticalCenterOffset: 61
         }
     }
 }

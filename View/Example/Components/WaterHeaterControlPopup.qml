@@ -51,8 +51,8 @@ Popup {
     Dial {
         id: control
         anchors.fill: parent
-        from: 10
-        to: 30
+        from: 40
+        to: 65
         stepSize: 0.5
         snapMode: Dial.SnapAlways
 
@@ -100,8 +100,8 @@ Popup {
             font.pixelSize: 18
             color: "white"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 50
-            anchors.verticalCenterOffset: 60
+            anchors.horizontalCenterOffset: 51
+            anchors.verticalCenterOffset: 61
         }
     }
 }
