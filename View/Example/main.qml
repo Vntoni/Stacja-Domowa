@@ -10,7 +10,7 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 480
-    title: qsTr("Sterowanie ogrzewaniem i podgrzewaniem")
+    title: qsTr("Baza domowa")
     Material.theme: Material.Dark
 
     property bool isReady: false

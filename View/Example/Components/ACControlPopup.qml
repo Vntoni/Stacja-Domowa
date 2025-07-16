@@ -14,6 +14,7 @@ Popup {
     property bool initialEconomy: false
     property bool initialPowerful: false
     property bool initialLowNoise: false
+    property bool initialPowerSave: false
 
     modal: true; focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
@@ -150,57 +151,87 @@ Popup {
         ColumnLayout {
             spacing: 12; Layout.alignment: Qt.AlignHCenter
 
-            Button {
-                id: econButton
-                text: "ECONOMY"
-                checkable: true
-                checked: initialEconomy
-                enabled: !powerButton.checked
-                Layout.fillWidth: true
+            RowLayout {
+                spacing: 10; Layout.alignment: Qt.AlignHCenter
+                Button {
+                    id: econButton
+                    text: "ECONOMY"
+                    checkable: true
+                    checked: initialEconomy
+                    enabled: !powerButton.checked
+                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
 
-                onClicked: initialEconomy = checked
-                Material.background: checked ? "#7ab666" : "#546e7a"
-                Material.foreground: enabled ? "white" : "#b0bec5"
-                Material.elevation: 2
-            }
+                    Layout.fillWidth: true
 
-            Button {
-                id: powerButton
-                text: "POWERFUL"
-                checkable: true
-                checked: initialPowerful
-                Layout.fillWidth: true
-
-                onClicked: {
-                    if (checked) {
-                        econButton.checked = false
-                        lowNoiseButton.checked = false
-                        initialEconomy = false
-                        initialLowNoise = false
-                    }
-                    initialPowerful = checked
+                    onClicked: initialEconomy = checked
+                    Material.background: checked ? "#7ab666" : "#546e7a"
+                    Material.foreground: enabled ? "white" : "#b0bec5"
+                    Material.elevation: 2
                 }
 
-                Material.background: checked ? "#ca322c" : "#546e7a"
-                Material.foreground: "white"
-                Material.elevation: 3
+                Button {
+                    id: powerSaveButton
+                    text: "POWERSAVE"
+                    checkable: true
+                    checked: initialPowerSave
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
+
+                    enabled: !powerButton.checked
+
+                    onClicked: initialPowerSave = checked
+                    Material.background: checked ? "#039BE5" : "#546e7a"
+                    Material.foreground: "white"
+                    Material.elevation: 3
+                }
+
+
             }
+            RowLayout {
+                spacing: 10; Layout.alignment: Qt.AlignHCenter
 
-            Button {
-                id: lowNoiseButton
-                text: "LOW NOISE"
-                checkable: true
-                checked: initialLowNoise
-                enabled: !powerButton.checked
-                Layout.fillWidth: true
+                Button {
+                    id: lowNoiseButton
+                    text: "LOW NOISE"
+                    checkable: true
+                    checked: initialLowNoise
+                    enabled: !powerButton.checked
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
 
-                onClicked: initialLowNoise = checked
-                Material.background: checked ? "#8d8d8d" : "#546e7a"
-                Material.foreground: enabled ? "white" : "#b0bec5"
-                Material.elevation: 2
+                    width:20
+
+                    onClicked: initialLowNoise = checked
+                    Material.background: checked ? "#8d8d8d" : "#546e7a"
+                    Material.foreground: enabled ? "white" : "#b0bec5"
+                    Material.elevation: 2
+                }
+                Button {
+                    id: powerButton
+                    text: "POWERFUL"
+                    checkable: true
+                    checked: initialPowerful
+                    Layout.fillWidth: true
+                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
+
+
+                    onClicked: {
+                        if (checked) {
+                            econButton.checked = false
+                            lowNoiseButton.checked = false
+                            initialEconomy = false
+                            initialLowNoise = false
+                            initialPowerSave = false
+                        }
+                        initialPowerful = checked
+                    }
+
+                    Material.background: checked ? "#ca322c" : "#546e7a"
+                    Material.foreground: "white"
+                    Material.elevation: 3
+                }
             }
         }
-
         Item { Layout.fillHeight: true }
 
         Button {

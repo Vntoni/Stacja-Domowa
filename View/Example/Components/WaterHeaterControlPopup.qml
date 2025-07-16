@@ -152,7 +152,7 @@ Popup {
                 height: 50
                 ButtonGroup.group: modeButton
 
-                Material.background: checked ? "#F57C00" : "#546e7a"
+                Material.background: checked ? "#dc6f00" : "#546e7a"
                 Material.foreground: "white"
                 Material.elevation: 2
             }

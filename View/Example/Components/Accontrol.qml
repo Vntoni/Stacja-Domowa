@@ -2,6 +2,7 @@ import QtQuick 6.8
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Basic 2.15
+import QtQuick.Controls.Material 2.15
 
 Rectangle {
     property real currentTempSalon: NaN
@@ -10,6 +11,9 @@ Rectangle {
     property bool acSalonPower: false
     property bool acJadalniaPower: false
     property bool waterHeaterPower: false
+
+    Material.theme: Material.Dark
+    Material.accent: Material.Pink
 
     Component.onCompleted: {
 
@@ -41,7 +45,7 @@ Rectangle {
             // Etykieta opisująca temperaturę
             Label {
                 text: qsTr("Temperatura pokoju")
-                color: "white"
+                color: Material.foreground
                 font.pixelSize: 14
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -50,7 +54,7 @@ Rectangle {
             // Wartość temperatury
             Label {
                 text: currentTempSalon.toFixed(1) + "°C"
-                color: "#17a81a"      // zielony, żeby odróżnić
+                color: Material.color(Material.Green)     // zielony, żeby odróżnić
                 font.pixelSize: 18
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
