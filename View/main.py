@@ -6,6 +6,7 @@ from PySide6.QtGui import QGuiApplication
 from PySide6.QtQml import QQmlApplicationEngine
 from PySide6.QtCore import qInstallMessageHandler
 from qasync import QEventLoop, asyncSlot
+import images.images
 
 from Model.Backend.ac_backend import Backend
 

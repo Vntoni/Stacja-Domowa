@@ -27,12 +27,12 @@ Rectangle {
     }
     RowLayout {
         spacing: 20
-        //anchors.centerIn: parent
+        anchors.centerIn: parent
 
         Rectangle {
             id: salonRect
             width: 200
-            height: 200
+            height: 300
             color: "#222"
             radius: 10
             border.color: "white"
@@ -44,22 +44,15 @@ Rectangle {
 
             // Etykieta opisująca temperaturę
             Label {
-                text: qsTr("Temperatura pokoju")
+                text: qsTr("Living Room")
                 color: Material.foreground
-                font.pixelSize: 14
+                font.pixelSize: 24
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 8
+                anchors.topMargin: 10
             }
             // Wartość temperatury
-            Label {
-                text: currentTempSalon.toFixed(1) + "°C"
-                color: Material.color(Material.Green)     // zielony, żeby odróżnić
-                font.pixelSize: 18
-                anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 28
-            }
+
 
             MultiPointTouchArea {
                 anchors.fill: parent
@@ -85,17 +78,33 @@ Rectangle {
                 spacing: 10
 
                 Label {
-                    text: "Klimatyzacja Salon"
-                    font.pixelSize: 20
-                    color: "white"
+                    text: "Room Temperature"
+                    font.pixelSize: 15
+                    color: "#BBB"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
 
+                Label {
+                    text: currentTempSalon.toFixed(1) + "°C"
+                    color: Material.color(Material.Green)     // zielony, żeby odróżnić
+                    font.pixelSize: 28
+                    anchors.top: parent.top
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: 28
+                }
+                Image {
+                source: "qrc:/icons/air-conditioner_2.png"
+                width: 64; height: 64
+                fillMode: Image.PreserveAspectFit
+                cache: Image.Always
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 44
+        }
 
                 Switch {
                     id: saloncontrol
-                    text: qsTr("ON/OFF")
+                    anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         saloncontrol.checked ? backend.turn_on_ac('Salon') :
                             backend.turn_off_ac('Salon')
@@ -140,7 +149,7 @@ Rectangle {
         Rectangle {
             id: jadalniaRect
             width: 200
-            height: 200
+            height: 300
             color: "#222"
             radius: 10
             border.color: "white"
@@ -152,22 +161,15 @@ Rectangle {
 
             // Etykieta opisująca temperaturę
             Label {
-                text: qsTr("Temperatura pokoju")
+                text: qsTr("Dining Room")
                 color: "white"
-                font.pixelSize: 14
+                font.pixelSize: 24
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 8
+                anchors.topMargin: 10
             }
             // Wartość temperatury
-            Label {
-                text: currentTempJadalnia.toFixed(1) + "°C"
-                color: "#17a81a"      // zielony, żeby odróżnić
-                font.pixelSize: 18
-                anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 28
-            }
+
 
             MultiPointTouchArea {
                 anchors.fill: parent
@@ -190,20 +192,35 @@ Rectangle {
             ColumnLayout {
                 anchors.fill: parent
                 anchors.topMargin: 50
-                spacing: 10
+                spacing: 12
 
                 Label {
-                    text: "Klimatyzacja Jadalnia"
-                    font.pixelSize: 20
-                    color: "white"
+                    text: "Room Temperature"
+                    font.pixelSize: 15
+                    color: "#BBB"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
+                Label {
+                text: currentTempJadalnia.toFixed(1) + "°C"
+                color: "#17a81a"      // zielony, żeby odróżnić
+                font.pixelSize: 28
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 28
+            }
 
-
+                Image {
+                    source: "qrc:/icons/air-conditioner_2.png"
+                    width: 64; height: 64
+                    fillMode: Image.PreserveAspectFit
+                    cache: Image.Always
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: 44
+                    }
                 Switch {
                     id: jadalniacontrol
-                    text: qsTr("ON/OFF")
+                    anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         jadalniacontrol.checked ? backend.turn_on_ac('Jadalnia') :
                             backend.turn_off_ac('Jadalnia')
@@ -251,7 +268,7 @@ Rectangle {
         Rectangle {
             id: boilerRect
             width: 200
-            height: 200
+            height: 300
             color: "#222"
             radius: 10
             border.color: "white"
@@ -263,22 +280,15 @@ Rectangle {
 
             // Etykieta opisująca temperaturę
             Label {
-                text: qsTr("Temperatura Wody")
+                text: qsTr("Water Heater")
                 color: "white"
-                font.pixelSize: 14
+                font.pixelSize: 24
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 8
+                anchors.topMargin: 10
             }
             // Wartość temperatury
-            Label {
-                text: currentTempBoiler.toFixed(1) + "°C"
-                color: "#17a81a"      // zielony, żeby odróżnić
-                font.pixelSize: 18
-                anchors.top: parent.top
-                anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 28
-            }
+
 
             MultiPointTouchArea {
                 anchors.fill: parent
@@ -303,17 +313,32 @@ Rectangle {
                 spacing: 10
 
                 Label {
-                    text: "Boiler"
-                    font.pixelSize: 20
-                    color: "white"
+                    text: "Water Temperature"
+                    font.pixelSize: 15
+                    color: "#BBB"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
 
-
+                Label {
+                text: currentTempBoiler.toFixed(1) + "°C"
+                color: "#17a81a"      // zielony, żeby odróżnić
+                font.pixelSize: 28
+                anchors.top: parent.top
+                anchors.horizontalCenter: parent.horizontalCenter
+                anchors.topMargin: 28
+            }
+                Image {
+                    source: "qrc:/icons/water_boiler.png"
+                    width: 64; height: 64
+                    fillMode: Image.PreserveAspectFit
+                    cache: Image.Always
+                    anchors.horizontalCenter: parent.horizontalCenter
+                    anchors.topMargin: 44
+                    }
                 Switch {
                     id: boilerControl
-                    text: qsTr("ON/OFF")
+                    anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         boilerControl.checked ? backend.turn_on_ac('Boiler') :
                             backend.turn_off_ac('Boiler')
@@ -325,8 +350,8 @@ Rectangle {
                         x: boilerControl.leftPadding
                         y: parent.height / 2 - height / 2
                         radius: 13
-                        color: boilerControl.checked ? "#17a81a" : "#ffffff"
-                        border.color: boilerControl.checked ? "#17a81a" : "#cccccc"
+                        color: boilerControl.checked ? "#f57c00"  : "#ffffff"
+                        border.color: boilerControl.checked ? "#f57c00"  : "#cccccc"
 
                         Rectangle {
                             x: boilerControl.checked ? parent.width - width : 0
@@ -334,7 +359,7 @@ Rectangle {
                             height: 26
                             radius: 13
                             color: boilerControl.down ? "#cccccc" : "#ffffff"
-                            border.color: boilerControl.checked ? (boilerControl.down ? "#17a81a" : "#21be2b") : "#999999"
+                            border.color: boilerControl.checked ? (boilerControl.down ? "#f57c00"  : "#21be2b") : "#999999"
                         }
                     }
 
@@ -342,7 +367,7 @@ Rectangle {
                         text: boilerControl.text
                         font: boilerControl.font
                         opacity: enabled ? 1.0 : 0.3
-                        color: boilerControl.down ? "#17a81a" : "#21be2b"
+                        color: boilerControl.down ? "#f57c00"  : "#21be2b"
                         verticalAlignment: Text.AlignVCenter
                         leftPadding: boilerControl.indicator.width + boilerControl.spacing
                     }
