@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Basic 2.15
 import QtQuick.Controls.Material 2.15
+import "."
 
 Rectangle {
     property real currentTempSalon: NaN
@@ -14,6 +15,7 @@ Rectangle {
 
     Material.theme: Material.Dark
     Material.accent: Material.Pink
+    color: "transparent"
 
     Component.onCompleted: {
 
@@ -25,9 +27,14 @@ Rectangle {
         backend.get_temp_indoor(jadalniaRect.room)
         backend.get_water_temp()})
     }
+    ColumnLayout {
+        id: mainCol
+        anchors.fill: parent
+        spacing: 20
+
     RowLayout {
         spacing: 20
-        anchors.centerIn: parent
+        Layout.alignment: Qt.AlignHCenter
 
         Rectangle {
             id: salonRect
@@ -379,7 +386,27 @@ Rectangle {
                 onTriggered: backend.get_water_temp()
             }
         }
+
     }
+RowLayout {
+            id: washerRow
+            Layout.fillWidth: true
+            Layout.alignment: Qt.AlignHCenter
+            spacing: 0
+            // “puste” miejsce po lewej, żeby badge trzymał się prawej strony
+            Item { Layout.fillWidth: true }
+
+            WasherMachine {
+                id: washerBadge
+                showWhenIdle: true
+                Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
+                Layout.rightMargin:20
+
+
+            }
+        }
+        }
+
     Connections {
         target: backend
 

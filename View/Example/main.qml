@@ -142,6 +142,7 @@ ApplicationWindow {
                     Loader {
                         id: contentLoader
                         anchors.margins: 10
+                        anchors.fill: parent
                         Layout.alignment: Qt.AlignHCenter// +10px odstępu
 
                     }

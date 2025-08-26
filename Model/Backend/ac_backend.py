@@ -4,6 +4,7 @@ from PySide6.QtCore import QObject, Signal, Property
 from qasync import asyncSlot
 from Model.AC.AC_Control import ACUnit
 from pyairstage.airstageAC import AirstageAC, ApiCloud
+from Model.Backend.washer_ble import WasherMachine
 
 username = "antekmigala@gmail.com"
 password = "F5eotvky"
@@ -25,13 +26,22 @@ class Backend(QObject):
     modeOperating = Signal(str)
     powerStatus = Signal(bool)
 
+    # Washer Machine
+    washerOnlineChanged = Signal(bool)
+    washerRemainingChanged = Signal(int)
+    washerLastSeenChanged = Signal(str)
+
     def __init__(self):
         super().__init__()
         self.salon = None
         self.jadalnia = None
         self.boiler = None
+        self.washer = WasherMachine()
         self.user = "antekmigala@gmail.com"
         self.pwd = "F5eotvky!"
+        self._washer_task = None
+        self._washer_poll_seconds = 10
+
 
     async def init_ac_units(self):
         api = ApiCloud(username=username, password=password, country=country)
@@ -217,6 +227,30 @@ class Backend(QObject):
     async def update_water_heater_data(self):
         await self.boiler.async_update_state()
         await self.boiler.async_update_energy()
+
+    """
+    Washer Machine section start
+    """
+
+    @asyncSlot()
+    async def start_washer_monitor(self):
+        if self._washer_task and not self._washer_task.done():
+            return
+        async def _runner():
+            while True:
+                try:
+                    st = await self._washer.snapshot(listen_seconds=8.0)
+                    self.washerOnlineChanged.emit(bool(st.online))
+                    if st.remaining_minutes is not None:
+                        self.washerRemainingChanged.emit(int(st.remaining_minutes))
+                    if st.last_seen:
+                        self.washerLastSeenChanged.emit(st.last_seen)
+                except Exception as e:
+                    # opcjonalnie logowanie błędów
+                    self.washerOnlineChanged.emit(False)
+                # odświeżanie co N sekund
+                await asyncio.sleep(self._washer_poll_seconds)
+        self._washer_task = asyncio.create_task(_runner())
 
 
 async def main():
