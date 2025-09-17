@@ -36,7 +36,7 @@ class Backend(QObject):
         self.salon = None
         self.jadalnia = None
         self.boiler = None
-        self.washer = WasherMachine()
+        self._washer = WasherMachine()
         self.user = "antekmigala@gmail.com"
         self.pwd = "F5eotvky!"
         self._washer_task = None
@@ -56,6 +56,7 @@ class Backend(QObject):
         await self.boiler.async_get_features()
         await self.boiler.async_update_state()
         await self.boiler.async_update_energy()
+        await self.start_washer_monitor()
         self.ready.emit(True)
 
     """
@@ -240,9 +241,10 @@ class Backend(QObject):
             while True:
                 try:
                     st = await self._washer.snapshot(listen_seconds=8.0)
-                    self.washerOnlineChanged.emit(bool(st.online))
+                    print(st.online, st.remaining_minutes, st.last_seen)
+                    self.washerOnlineChanged.emit(st.online)
                     if st.remaining_minutes is not None:
-                        self.washerRemainingChanged.emit(int(st.remaining_minutes))
+                        self.washerRemainingChanged.emit(st.remaining_minutes)
                     if st.last_seen:
                         self.washerLastSeenChanged.emit(st.last_seen)
                 except Exception as e:

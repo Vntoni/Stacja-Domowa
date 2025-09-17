@@ -111,15 +111,18 @@ ApplicationWindow {
             TabBar {
                 id: tabBar
                 Layout.preferredHeight: 50
+                Layout.preferredWidth: 230
 
                 TabButton {
-                    text: qsTr("Parter")
+                    text: qsTr("Downstairs")
+                    font.pixelSize: 16
                     onClicked: {
                         contentLoader.source = "Components/Accontrol.qml"
                     }
                 }
                 TabButton {
-                    text: qsTr("Piętro")
+                    text: qsTr("Upstairs")
+                    font.pixelSize: 16
                     onClicked: {
                         contentLoader.source = "Components/HeaterControl.qml"
                     }

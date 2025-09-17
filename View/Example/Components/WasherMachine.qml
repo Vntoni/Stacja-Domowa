@@ -19,7 +19,7 @@ Rectangle {
     radius: 30
 
     // tło wg stanu (zostawiam Twoje)
-    color: !online ? "#b84a4a" : (remaining > 0 ? "#1f8f3a" : "#4d5359")
+    color: !online ? "#b84a4a" : (remaining > 0 ? "#1f8f3a" : "#b84a4a")
     opacity: 0.95
     border.color: "#d8dfd8"; border.width: 1
 
@@ -45,7 +45,7 @@ Rectangle {
         Text {
             id: statusText
             text: !online ? "OFF"
-                 : (remaining > 0 ? remaining + " min" : "Idle")
+                 : (remaining > 0 ? remaining + " min" : "OFF")
             color: "white"
             font.pixelSize: 20
             Layout.alignment: Qt.AlignVCenter
@@ -67,7 +67,10 @@ Rectangle {
     // sygnały z backendu
     Connections {
         target: backend
-        function onWasherOnlineChanged(v)       { washerPill.online = v }
+        function onWasherOnlineChanged(v){
+            if (v === true) {
+               washerPill.online = true }
+               }
         function onWasherRemainingChanged(mins) { washerPill.remaining = mins }
         function onWasherLastSeenChanged(ts)    { washerPill.lastSeen = ts }
     }

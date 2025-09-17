@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Effects
 
 Popup {
     id: acPopup
@@ -22,7 +23,25 @@ Popup {
         NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
     }
     width: 400; height: 460
-    background: Rectangle { color: Material.background; radius: 10 }
+    background: Item {                                   // <— ZMIENIONE
+        // cień pod kartą (shadowOnly = rysuje sam cień)
+        MultiEffect {
+            id: shadow;
+            anchors.fill: parent;
+            source: bg;
+            shadowEnabled: true;
+            layer.enabled: true;
+            shadowBlur: 0.2; shadowOpacity: 0.2; shadowColor: "#000000"
+        }
+
+
+        Rectangle {
+            id: bg; anchors.fill: parent
+            color: Material.background
+            radius: 14
+            border.color: "#ffffff22"                    // hairline
+        }
+    }
 
     onOpened: {
         acPopup.x = (parent.width - acPopup.width) / 2
@@ -32,6 +51,8 @@ Popup {
         backend.get_economy(room)
         backend.get_powerful(room)
         backend.get_low_noise(room)
+
+
     }
 
     ColumnLayout {
@@ -234,10 +255,10 @@ Popup {
         }
         Item { Layout.fillHeight: true }
 
-        Button {
+         Button {
             text: "Set"
             font.pixelSize: 16
-            Layout.alignment: Qt.AlignHCenter
+            Layout.fillWidth: true
             onClicked: {
                 backend.set_temperature(room, control.value)
                 backend.set_mode_operation(room, currentMode)
@@ -245,9 +266,9 @@ Popup {
                 backend.set_powerful(room, powerButton.checked)
                 backend.set_low_noise(room, lowNoiseButton.checked)
             }
-            Material.background: "#8C99A0"
-            Material.foreground: "white"
-            Material.elevation: 3
+            Material.background: "#29d884"
+            Material.foreground: "#0f1217"
+            Material.elevation: 4
         }
     }
 

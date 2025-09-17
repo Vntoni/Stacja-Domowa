@@ -31,8 +31,8 @@ class WasherMachine:
             return None
         payload = data[4:]
         # W ~64-bajtowych ramkach minutes siedzi w payload[54] (z Twoich logów)
-        if len(payload) >= 59:
-            return payload[54]
+        if len(payload) >= 58:
+            return payload[50]
         return None
 
     async def _find_device(self, timeout=4.0):
