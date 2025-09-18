@@ -3,6 +3,7 @@ import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import QtQuick.Controls.Basic 2.15
 import QtQuick.Controls.Material 2.15
+import QtQuick.Effects
 import "."
 
 Rectangle {
@@ -45,6 +46,17 @@ Rectangle {
             border.color: "white"
             border.width: 1
             property string room: "Salon"
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowOpacity: 0.35     // 0.28–0.40
+                    shadowBlur: 0.30
+                    shadowHorizontalOffset: 7
+                    shadowVerticalOffset: 4
+                    saturation: 0.2
+
+
+                    }
 
             signal clicked(string room)
 
@@ -57,7 +69,10 @@ Rectangle {
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 10
-            }
+                layer.enabled: true
+
+                }
+
             // Wartość temperatury
 
 
@@ -107,6 +122,17 @@ Rectangle {
                 cache: Image.Always
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 44
+                layer.enabled: true
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowOpacity: 0.25     // 0.28–0.40
+                    shadowBlur: 0.60
+                    shadowHorizontalOffset: 3
+                    shadowVerticalOffset: 3
+                    saturation: 0.1
+
+
+                    }
         }
 
                 Switch {
@@ -115,6 +141,17 @@ Rectangle {
                     onToggled: {
                         saloncontrol.checked ? backend.turn_on_ac('Salon') :
                             backend.turn_off_ac('Salon')
+                    }
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowOpacity: 0.35     // 0.28–0.40
+                        shadowBlur: 0.40
+                        shadowHorizontalOffset: 4
+                        shadowVerticalOffset: 3
+                        saturation: 0.1
+
+
                     }
 
                     indicator: Rectangle {
@@ -162,7 +199,17 @@ Rectangle {
             border.color: "white"
             border.width: 1
             property string room: "Jadalnia"
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowOpacity: 0.35     // 0.28–0.40
+                    shadowBlur: 0.30
+                    shadowHorizontalOffset: 7
+                    shadowVerticalOffset: 4
+                    saturation: 0.2
 
+
+                    }
             signal clicked(string room)
 
 
@@ -224,6 +271,17 @@ Rectangle {
                     cache: Image.Always
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.topMargin: 44
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowOpacity: 0.25
+                        shadowBlur: 0.60
+                        shadowHorizontalOffset: 3
+                        shadowVerticalOffset: 3
+                        saturation: 0.1
+
+
+                    }
                     }
                 Switch {
                     id: jadalniacontrol
@@ -231,6 +289,17 @@ Rectangle {
                     onToggled: {
                         jadalniacontrol.checked ? backend.turn_on_ac('Jadalnia') :
                             backend.turn_off_ac('Jadalnia')
+                    }
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowOpacity: 0.35     // 0.28–0.40
+                        shadowBlur: 0.40
+                        shadowHorizontalOffset: 4
+                        shadowVerticalOffset: 3
+                        saturation: 0.1
+
+
                     }
 
                     indicator: Rectangle {
@@ -281,7 +350,17 @@ Rectangle {
             border.color: "white"
             border.width: 1
             property string room: "Boiler"
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowOpacity: 0.35     // 0.28–0.40
+                    shadowBlur: 0.30
+                    shadowHorizontalOffset: 7
+                    shadowVerticalOffset: 4
+                    saturation: 0.2
 
+
+                    }
             signal clicked(string room)
 
 
@@ -342,13 +421,35 @@ Rectangle {
                     cache: Image.Always
                     anchors.horizontalCenter: parent.horizontalCenter
                     anchors.topMargin: 44
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowOpacity: 0.25     // 0.28–0.40
+                        shadowBlur: 0.60
+                        shadowHorizontalOffset: 3
+                        shadowVerticalOffset: 3
+                        saturation: 0.1
+
+
+                    }
                     }
                 Switch {
                     id: boilerControl
                     anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         boilerControl.checked ? backend.turn_on_ac('Boiler') :
-                            backend.turn_off_ac('Boiler')
+                        backend.turn_off_ac('Boiler')
+                            }
+                    layer.enabled: true
+                    layer.effect: MultiEffect {
+                        shadowEnabled: true
+                        shadowOpacity: 0.35     // 0.28–0.40
+                        shadowBlur: 0.40
+                        shadowHorizontalOffset: 4
+                        shadowVerticalOffset: 3
+                        saturation: 0.1
+
+
                     }
 
                     indicator: Rectangle {

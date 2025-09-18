@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Controls.Material 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Effects
 
 Popup {
     id: waterHeaterPopup
@@ -22,10 +23,23 @@ Popup {
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
     width: 400
     height: 460
+    enter: Transition {
+        NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
+    }
 
     background: Rectangle {
         color: Material.background
-        radius: 10
+        radius: 14
+        layer.enabled: true
+            layer.effect: MultiEffect {
+                id: shadow
+                shadowEnabled: true
+                shadowBlur: 0.8
+                shadowOpacity: 0.5
+                shadowHorizontalOffset: 5
+                shadowVerticalOffset: 4
+
+        }
     }
 
     onOpened: {

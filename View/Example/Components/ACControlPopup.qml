@@ -23,23 +23,21 @@ Popup {
         NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
     }
     width: 400; height: 460
-    background: Item {                                   // <— ZMIENIONE
-        // cień pod kartą (shadowOnly = rysuje sam cień)
-        MultiEffect {
-            id: shadow;
-            anchors.fill: parent;
-            source: bg;
-            shadowEnabled: true;
-            layer.enabled: true;
-            shadowBlur: 0.2; shadowOpacity: 0.2; shadowColor: "#000000"
-        }
-
-
+    background:
         Rectangle {
-            id: bg; anchors.fill: parent
+            id: bg
+            anchors.fill: parent
             color: Material.background
             radius: 14
-            border.color: "#ffffff22"                    // hairline
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                id: shadow
+                shadowEnabled: true
+                shadowBlur: 0.8
+                shadowOpacity: 0.5
+                shadowHorizontalOffset: 5
+                shadowVerticalOffset: 4
+
         }
     }
 

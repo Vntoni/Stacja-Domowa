@@ -1,6 +1,7 @@
 import QtQuick 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Effects
 
 Rectangle {
     id: washerPill
@@ -8,6 +9,17 @@ Rectangle {
     property bool online: false
     property int  remaining: -1
     property string lastSeen: ""
+    layer.enabled: true
+    layer.effect: MultiEffect {
+            shadowEnabled: true
+            shadowOpacity: 0.35     // 0.28–0.40
+            shadowBlur: 0.30
+            shadowHorizontalOffset: 7
+            shadowVerticalOffset: 4
+            saturation: 0.2
+
+
+            }
 
     // widoczność wg statusu
     visible: online ? (showWhenIdle || remaining > 0) : true
@@ -35,7 +47,18 @@ Rectangle {
             source: "qrc:/icons/laundry-machine.png"
             width: 56; height: 56
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
-            Layout.leftMargin: 6     // << lekki margines ikony
+            Layout.leftMargin: 6
+            layer.enabled: true
+            layer.effect: MultiEffect {
+                shadowEnabled: true
+                shadowOpacity: 0.25     // 0.28–0.40
+                shadowBlur: 0.60
+                shadowHorizontalOffset: 3
+                shadowVerticalOffset: 3
+                saturation: 0.1
+
+
+                    }
         }
 
         // „sprężyna” po lewej stronie tekstu
