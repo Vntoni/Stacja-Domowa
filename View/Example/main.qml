@@ -8,8 +8,9 @@ import "Components"
 ApplicationWindow {
     id: appWindow
     visible: true
-    width: 800
-    height: 480
+    width: Screen.width
+    height: Screen.height
+    visibility: Window.FullScreen
     title: qsTr("Baza domowa")
     Material.theme: Material.Dark
     Material.accent: Material.Green
@@ -110,19 +111,19 @@ ApplicationWindow {
             // Pasek zakładek
             TabBar {
                 id: tabBar
-                Layout.preferredHeight: 50
-                Layout.preferredWidth: 230
+                Layout.preferredHeight: 100
+                Layout.preferredWidth: 300
 
                 TabButton {
                     text: qsTr("Downstairs")
-                    font.pixelSize: 16
+                    font.pixelSize: 20
                     onClicked: {
                         contentLoader.source = "Components/Accontrol.qml"
                     }
                 }
                 TabButton {
                     text: qsTr("Upstairs")
-                    font.pixelSize: 16
+                    font.pixelSize: 20
                     onClicked: {
                         contentLoader.source = "Components/HeaterControl.qml"
                     }
@@ -134,7 +135,7 @@ ApplicationWindow {
             Rectangle {
                 Layout.fillHeight: true
                 Layout.alignment: Qt.AlignHCenter
-                implicitWidth: 700
+                implicitWidth: 900
                 color: Material.background     // <-- tu masz pewność, że jest ciemno
                 anchors.margins: 10
 

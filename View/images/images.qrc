@@ -1,11 +1,13 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
-    <qresource prefix="icons">
-        <file alias="boiler.png">C:\Users\85faht\Baza_Domowa\View\images\boiler.png</file>
+    <qresource prefix="icons64">
         <file alias="water_boiler.png">C:\Users\85faht\Baza_Domowa\View\images\boiler_1.png</file>
-        <file alias="air-conditioner.png">C:\Users\85faht\Baza_Domowa\View\images\air-conditioner.png</file>
         <file alias="air-conditioner_2.png">C:\Users\85faht\Baza_Domowa\View\images\air-conditioner_2.png</file>
-        <file alias="air-conditioning.png">C:\Users\85faht\Baza_Domowa\View\images\air-conditioning.png</file>
         <file alias="laundry-machine.png">C:\Users\85faht\Baza_Domowa\View\images\laundry-machine.png</file>
+    </qresource>
+    <qresource prefix="icons128">
+        <file alias="boiler_128.png">C:\Users\85faht\Baza_Domowa\View\images\128\boiler.png</file>
+        <file alias="air-conditioner_128.png">C:\Users\85faht\Baza_Domowa\View\images\128\air-conditioner.png</file>
+        <file alias="laundry-machine_128.png">C:\Users\85faht\Baza_Domowa\View\images\128\laundry-machine.png</file>
     </qresource>
 </RCC>

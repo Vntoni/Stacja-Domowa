@@ -3,7 +3,7 @@ import csv
 import datetime as dt
 from bleak import BleakScanner, BleakClient, BleakError
 
-# --- KONFIG ---
+# --- CONFIG ---
 TARGET_NAME_PREFIX = "HwZ_"  # u Ciebie nazwa zaczyna się od HwZ_
 TARGET_MAC = "88:F2:BD:3C:58:43"  # jeśli znasz; inaczej zostaw i skrypt znajdzie po nazwie
 UUIDS = {

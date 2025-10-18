@@ -12,7 +12,13 @@ country = "PL"
 
 class Backend(QObject):
 
+    #ALL ONLINE
     ready = Signal(bool)
+    #EVERY ONLINE
+    acJadalniaOnlineChanged = Signal(bool)
+    acSalonOnlineChanged = Signal(bool)
+    boilerOnlineChanged = Signal(bool)
+
     # AC Signals
     tempIndoorChanged = Signal(str, float)
     modeReceived = Signal(str, str)
@@ -44,20 +50,72 @@ class Backend(QObject):
 
 
     async def init_ac_units(self):
-        api = ApiCloud(username=username, password=password, country=country)
-        await api.authenticate()
+        #AC UNITS
+        try:
+            api = ApiCloud(username=username, password=password, country=country)
+            await api.authenticate()
+        except Exception as e:
+            print(f"Błąd logowania do AIRSTAGE API: {e}")
+            self.acSalonOnlineChanged.emit(False)
+            self.acJadalniaOnlineChanged.emit(False)
+            return
+
+
         self.salon = AirstageAC("E8FB1CFF888D", api)
+        await self.salon.refresh_parameters()
+        if self.salon._cache["connectionStatus"] == "Offline":
+            print(f"Błąd inicjalizacji AC Salon: Jednostka Offline")
+            self.acSalonOnlineChanged.emit(False)
+
         self.jadalnia = AirstageAC("505A6531B561", api)
         await self.jadalnia.refresh_parameters()
-        await self.salon.refresh_parameters()
-        print("Jednostki klimatyzacji gotowe!")
-        await ariston._async_connect(self.user, self.pwd)
-        self.boiler = await ariston.async_hello(self.user, self.pwd, "A842E373D878", True, "en-US")
-        await self.boiler.async_get_features()
-        await self.boiler.async_update_state()
-        await self.boiler.async_update_energy()
-        await self.start_washer_monitor()
+        if self.jadalnia._cache["connectionStatus"] == "Offline":
+            print(f"Błąd inicjalizacji AC Jadalnia: Jednostka Offline")
+            self.acJadalniaOnlineChanged.emit(False)
+
+        try:
+            await ariston._async_connect(self.user, self.pwd)
+            self.boiler = await ariston.async_hello(self.user, self.pwd, "A842E373D878", True, "en-US")
+            await self.boiler.async_get_features()
+            await self.boiler.async_update_state()
+            await self.boiler.async_update_energy()
+            await self.start_washer_monitor()
+        except Exception as e:
+            print(f"Błąd inicjalizacji boilera: {e}")
+            self.boilerOnlineChanged.emit(False)
+
+
+
         self.ready.emit(True)
+
+    @asyncSlot()
+    async def refresh_connection(self):
+        try:
+            await self.salon.refresh_parameters()
+            await self.jadalnia.refresh_parameters()
+            await self.boiler.async_update_state()
+            await self.boiler.async_update_energy()
+        except Exception as e:
+            print(e)
+            self.boilerOnlineChanged.emit(False)
+
+        if not (self.salon._cache["connectionStatus"] == "Offline" and self.jadalnia._cache["connectionStatus"] == "Offline"):
+            print("AC UNITS ONLINE!")
+            self.acSalonOnlineChanged.emit(True)
+            self.acJadalniaOnlineChanged.emit(True)
+        elif self.salon._cache["connectionStatus"] == "Online":
+            print("SALON ONLINE!")
+            self.acSalonOnlineChanged.emit(True)
+            self.acJadalniaOnlineChanged.emit(False)
+        elif self.jadalnia._cache["connectionStatus"] == "Online":
+            print("JADALNIA ONLINE!")
+            self.acSalonOnlineChanged.emit(False)
+            self.acJadalniaOnlineChanged.emit(True)
+        else:
+            print("AC UNITS OFFLINE!")
+            self.acSalonOnlineChanged.emit(False)
+            self.acJadalniaOnlineChanged.emit(False)
+
 
     """
     AC Units functions sections starts

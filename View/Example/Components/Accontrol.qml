@@ -18,8 +18,10 @@ Rectangle {
     Material.accent: Material.Pink
     color: "transparent"
 
-    Component.onCompleted: {
 
+
+    Component.onCompleted: {
+        backend.refresh_connection()
         Qt.callLater(function (){
         backend.get_water_heater_power()
         backend.get_mode_operation(salonRect.room)
@@ -34,18 +36,20 @@ Rectangle {
         spacing: 20
 
     RowLayout {
+
         spacing: 20
         Layout.alignment: Qt.AlignHCenter
 
         Rectangle {
             id: salonRect
-            width: 200
-            height: 300
+            width: 300
+            height: 400
             color: "#222"
             radius: 10
-            border.color: "white"
+            border.color: salonRect.online ? "white": "#E53935"
             border.width: 1
             property string room: "Salon"
+            property bool online: true
             layer.enabled: true
             layer.effect: MultiEffect {
                     shadowEnabled: true
@@ -65,7 +69,7 @@ Rectangle {
             Label {
                 text: qsTr("Living Room")
                 color: Material.foreground
-                font.pixelSize: 24
+                font.pixelSize: 30
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 10
@@ -86,7 +90,7 @@ Rectangle {
 
                 onPressed: {
                     var currentTime = Date.now();
-                    if (currentTime - lastTapTime < doubleTapThreshold) {
+                    if (currentTime - lastTapTime < doubleTapThreshold && salonRect.online === true) {
                         // Double tap detected
                         acPopup.room = "Salon"
                         acPopup.open();
@@ -101,23 +105,23 @@ Rectangle {
 
                 Label {
                     text: "Room Temperature"
-                    font.pixelSize: 15
+                    font.pixelSize: 21
                     color: "#BBB"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
                 }
 
                 Label {
-                    text: currentTempSalon.toFixed(1) + "°C"
-                    color: Material.color(Material.Green)     // zielony, żeby odróżnić
-                    font.pixelSize: 28
+                    text: salonRect.online ? currentTempSalon.toFixed(1) + "°C" : "OFFLINE"
+                    color: salonRect.online ? "#17a81a"  :  Material.color(Material.Red)  // zielony, żeby odróżnić
+                    font.pixelSize: 34
                     anchors.top: parent.top
                     anchors.horizontalCenter: parent.horizontalCenter
-                    anchors.topMargin: 28
+                    anchors.topMargin: 34
                 }
                 Image {
-                source: "qrc:/icons/air-conditioner_2.png"
-                width: 64; height: 64
+                source: "qrc:/icons128/air-conditioner_128.png"
+                width: 128; height: 128
                 fillMode: Image.PreserveAspectFit
                 cache: Image.Always
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -192,13 +196,14 @@ Rectangle {
 
         Rectangle {
             id: jadalniaRect
-            width: 200
-            height: 300
+            width: 300
+            height: 400
             color: "#222"
             radius: 10
-            border.color: "white"
+            border.color: jadalniaRect.online ? "white": "#E53935"
             border.width: 1
             property string room: "Jadalnia"
+            property bool online: true
             layer.enabled: true
             layer.effect: MultiEffect {
                     shadowEnabled: true
@@ -256,8 +261,8 @@ Rectangle {
                     Layout.alignment: Qt.AlignHCenter
                 }
                 Label {
-                text: currentTempJadalnia.toFixed(1) + "°C"
-                color: "#17a81a"      // zielony, żeby odróżnić
+                text: jadalniaRect.online ? currentTempJadalnia.toFixed(1) + "°C" : "OFFLINE"
+                color: jadalniaRect.online ? "#17a81a"  :  Material.color(Material.Red)
                 font.pixelSize: 28
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
@@ -265,8 +270,8 @@ Rectangle {
             }
 
                 Image {
-                    source: "qrc:/icons/air-conditioner_2.png"
-                    width: 64; height: 64
+                    source: "qrc:/icons128/air-conditioner_128.png"
+                    width: 128; height: 128
                     fillMode: Image.PreserveAspectFit
                     cache: Image.Always
                     anchors.horizontalCenter: parent.horizontalCenter
@@ -337,19 +342,19 @@ Rectangle {
                 onTriggered: backend.get_temp_indoor(jadalniaRect.room)
             }
 
-            // Połącz sygnał temperatury
 
         }
 
         Rectangle {
             id: boilerRect
-            width: 200
-            height: 300
+            width: 300
+            height: 400
             color: "#222"
             radius: 10
-            border.color: "white"
+            border.color: boilerRect.online ? "white": "#E53935"
             border.width: 1
             property string room: "Boiler"
+            property bool online: true
             layer.enabled: true
             layer.effect: MultiEffect {
                     shadowEnabled: true
@@ -407,15 +412,15 @@ Rectangle {
                 }
 
                 Label {
-                text: currentTempBoiler.toFixed(1) + "°C"
-                color: "#17a81a"      // zielony, żeby odróżnić
+                text: boilerRect.online ? currentTempBoiler.toFixed(1) + "°C" : "OFFLINE"
+                color: boilerRect.online ? "#17a81a"   :  Material.color(Material.Red)
                 font.pixelSize: 28
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 28
             }
                 Image {
-                    source: "qrc:/icons/water_boiler.png"
+                    source: "qrc:/icons128/boiler_128.png"
                     width: 64; height: 64
                     fillMode: Image.PreserveAspectFit
                     cache: Image.Always
@@ -539,6 +544,18 @@ RowLayout {
             jadalniacontrol.checked = mode !== "OFF";
         }
     }
+
+    function onAcSalonOnlineChanged(status) {
+        salonRect.online = status;
+    }
+    function onAcJadalniaOnlineChanged(status) {
+        jadalniaRect.online = status;
+    }
+    function onBoilerOnlineChanged(status) {
+        boilerRect.online = status;
+    }
+
+
 }
 }
 

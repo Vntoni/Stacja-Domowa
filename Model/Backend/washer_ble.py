@@ -30,7 +30,7 @@ class WasherMachine:
         if len(data) < 4 or data[0] != 0x02 or data[1] != 0x04:
             return None
         payload = data[4:]
-        # W ~64-bajtowych ramkach minutes siedzi w payload[54] (z Twoich logów)
+        # W 64-bajtowych ramkach minutes siedzi w payload[54]
         if len(payload) >= 58:
             return payload[50]
         return None
