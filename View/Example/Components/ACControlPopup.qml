@@ -22,7 +22,7 @@ Popup {
     enter: Transition {
         NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
     }
-    width: 400; height: 460
+    width: 400 *1.5; height: 460 *1.5
     background:
         Rectangle {
             id: bg
@@ -55,13 +55,13 @@ Popup {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 16
+        anchors.margins: 24
+        spacing: 28
 
         // === DIAL ===
         Item {
-    Layout.preferredWidth: 150
-    Layout.preferredHeight: 150
+    Layout.preferredWidth: 200
+    Layout.preferredHeight: 200
     Layout.alignment: Qt.AlignHCenter
 
     Dial {
@@ -113,20 +113,27 @@ Popup {
         // Tekst temperatury
         contentItem: Text {
             text: control.value.toFixed(1) + "°C"
-            font.pixelSize: 18
+            font.pixelSize: 24
             color: "white"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 51
-            anchors.verticalCenterOffset: 61
+            anchors.horizontalCenterOffset: 54
+            anchors.verticalCenterOffset: 69
         }
     }
 }
 
 
         // === TRYBY ===
-        RowLayout {
-            spacing: 10; Layout.alignment: Qt.AlignHCenter
-            ButtonGroup { id: modeGroup }
+        GridLayout {
+    columns: 3
+    columnSpacing: 8
+    rowSpacing: 8
+    Layout.alignment: Qt.AlignHCenter
+    ButtonGroup { id: modeGroup }
+
+        // RowLayout {
+        //     spacing: 10; Layout.alignment: Qt.AlignHCenter
+        //     ButtonGroup { id: modeGroup }
 
             Repeater {
                 model: [
@@ -144,7 +151,7 @@ Popup {
                     checked: currentMode === modelData.label
                     onClicked: currentMode = modelData.label
                     Layout.fillWidth: true
-                    font.pixelSize: 14
+                    font.pixelSize: 20
                     ButtonGroup.group: modeGroup
 
                     Material.background: checked ? modelData.color : "#546e7a"
@@ -171,14 +178,19 @@ Popup {
             spacing: 12; Layout.alignment: Qt.AlignHCenter
 
             RowLayout {
-                spacing: 10; Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
+                spacing: 12
+                Layout.alignment: Qt.AlignHCenter
+
                 Button {
                     id: econButton
                     text: "ECONOMY"
+                    font.pixelSize: 18
                     checkable: true
                     checked: initialEconomy
                     enabled: !powerButton.checked
-                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    //Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    Layout.preferredHeight: 68
 
                     Layout.fillWidth: true
 
@@ -191,10 +203,12 @@ Popup {
                 Button {
                     id: powerSaveButton
                     text: "POWERSAVE"
+                    font.pixelSize: 18
                     checkable: true
                     checked: initialPowerSave
                     Layout.fillWidth: true
-                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    //Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    Layout.preferredHeight: 68
 
                     enabled: !powerButton.checked
 
@@ -207,16 +221,19 @@ Popup {
 
             }
             RowLayout {
-                spacing: 10; Layout.alignment: Qt.AlignHCenter
+                spacing: 12; Layout.alignment: Qt.AlignHCenter
+                Layout.fillWidth: true
 
                 Button {
                     id: lowNoiseButton
                     text: "LOW NOISE"
+                    font.pixelSize: 18
                     checkable: true
                     checked: initialLowNoise
                     enabled: !powerButton.checked
                     Layout.fillWidth: true
-                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    //Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    Layout.preferredHeight: 68
 
                     width:20
 
@@ -228,10 +245,12 @@ Popup {
                 Button {
                     id: powerButton
                     text: "POWERFUL"
+                    font.pixelSize: 18
                     checkable: true
                     checked: initialPowerful
                     Layout.fillWidth: true
-                    Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    //Layout.preferredWidth: (parent.width - columnSpacing) / 2
+                    Layout.preferredHeight: 68
 
 
                     onClicked: {

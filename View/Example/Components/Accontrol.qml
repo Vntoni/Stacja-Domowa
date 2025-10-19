@@ -141,6 +141,7 @@ Rectangle {
 
                 Switch {
                     id: saloncontrol
+                    enabled: salonRect.online
                     anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         saloncontrol.checked ? backend.turn_on_ac('Salon') :
@@ -159,19 +160,19 @@ Rectangle {
                     }
 
                     indicator: Rectangle {
-                        implicitWidth: 48
-                        implicitHeight: 26
+                        implicitWidth: 48 *1.5
+                        implicitHeight: 26 *1.5
                         x: saloncontrol.leftPadding
                         y: parent.height / 2 - height / 2
-                        radius: 13
+                        radius: 13 *1.5
                         color: saloncontrol.checked ? "#17a81a" : "#ffffff"
                         border.color: saloncontrol.checked ? "#17a81a" : "#cccccc"
 
                         Rectangle {
                             x: saloncontrol.checked ? parent.width - width : 0
-                            width: 26
-                            height: 26
-                            radius: 13
+                            width: 26 *1.5
+                            height: 26 *1.5
+                            radius: 13 *1.5
                             color: saloncontrol.down ? "#cccccc" : "#ffffff"
                             border.color: saloncontrol.checked ? (saloncontrol.down ? "#17a81a" : "#21be2b") : "#999999"
                         }
@@ -222,7 +223,7 @@ Rectangle {
             Label {
                 text: qsTr("Dining Room")
                 color: "white"
-                font.pixelSize: 24
+                font.pixelSize: 30
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 10
@@ -240,7 +241,7 @@ Rectangle {
 
                 onPressed: {
                     var currentTime = Date.now();
-                    if (currentTime - lastTapTime < doubleTapThreshold) {
+                    if (currentTime - lastTapTime < doubleTapThreshold && jadalniaRect.online === true){
                         // Double tap detected
                         acPopup.room = "Jadalnia"
                         acPopup.open();
@@ -255,7 +256,7 @@ Rectangle {
 
                 Label {
                     text: "Room Temperature"
-                    font.pixelSize: 15
+                    font.pixelSize: 21
                     color: "#BBB"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
@@ -263,10 +264,10 @@ Rectangle {
                 Label {
                 text: jadalniaRect.online ? currentTempJadalnia.toFixed(1) + "°C" : "OFFLINE"
                 color: jadalniaRect.online ? "#17a81a"  :  Material.color(Material.Red)
-                font.pixelSize: 28
+                font.pixelSize: 34
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 28
+                anchors.topMargin: 34
             }
 
                 Image {
@@ -290,6 +291,7 @@ Rectangle {
                     }
                 Switch {
                     id: jadalniacontrol
+                    enabled: jadalniaRect.online
                     anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         jadalniacontrol.checked ? backend.turn_on_ac('Jadalnia') :
@@ -308,19 +310,19 @@ Rectangle {
                     }
 
                     indicator: Rectangle {
-                        implicitWidth: 48
-                        implicitHeight: 26
+                        implicitWidth: 48 *1.5
+                        implicitHeight: 26 *1.5
                         x: jadalniacontrol.leftPadding
                         y: parent.height / 2 - height / 2
-                        radius: 13
+                        radius: 13 *1.5
                         color: jadalniacontrol.checked ? "#17a81a" : "#ffffff"
                         border.color: jadalniacontrol.checked ? "#17a81a" : "#cccccc"
 
                         Rectangle {
                             x: jadalniacontrol.checked ? parent.width - width : 0
-                            width: 26
-                            height: 26
-                            radius: 13
+                            width: 26 *1.5
+                            height: 26 *1.5
+                            radius: 13 *1.5
                             color: jadalniacontrol.down ? "#cccccc" : "#ffffff"
                             border.color: jadalniacontrol.checked ? (jadalniacontrol.down ? "#17a81a" : "#21be2b") : "#999999"
                         }
@@ -373,7 +375,7 @@ Rectangle {
             Label {
                 text: qsTr("Water Heater")
                 color: "white"
-                font.pixelSize: 24
+                font.pixelSize: 31
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
                 anchors.topMargin: 10
@@ -391,7 +393,7 @@ Rectangle {
 
                 onPressed: {
                     var currentTime = Date.now();
-                    if (currentTime - lastTapTime < doubleTapThreshold) {
+                    if (currentTime - lastTapTime < doubleTapThreshold && boilerRect.online === true) {
                         // Double tap detected
                         waterHeaterPopup.open();
                     }
@@ -405,7 +407,7 @@ Rectangle {
 
                 Label {
                     text: "Water Temperature"
-                    font.pixelSize: 15
+                    font.pixelSize: 21
                     color: "#BBB"
                     horizontalAlignment: Text.AlignHCenter
                     Layout.alignment: Qt.AlignHCenter
@@ -414,10 +416,10 @@ Rectangle {
                 Label {
                 text: boilerRect.online ? currentTempBoiler.toFixed(1) + "°C" : "OFFLINE"
                 color: boilerRect.online ? "#17a81a"   :  Material.color(Material.Red)
-                font.pixelSize: 28
+                font.pixelSize: 34
                 anchors.top: parent.top
                 anchors.horizontalCenter: parent.horizontalCenter
-                anchors.topMargin: 28
+                anchors.topMargin: 34
             }
                 Image {
                     source: "qrc:/icons128/boiler_128.png"
@@ -440,6 +442,7 @@ Rectangle {
                     }
                 Switch {
                     id: boilerControl
+                    enabled: boilerRect.online
                     anchors.horizontalCenter: parent.horizontalCenter
                     onToggled: {
                         boilerControl.checked ? backend.turn_on_ac('Boiler') :
@@ -458,19 +461,19 @@ Rectangle {
                     }
 
                     indicator: Rectangle {
-                        implicitWidth: 48
-                        implicitHeight: 26
+                        implicitWidth: 48 *1.5
+                        implicitHeight: 26 *1.5
                         x: boilerControl.leftPadding
                         y: parent.height / 2 - height / 2
-                        radius: 13
+                        radius: 13 *1.5
                         color: boilerControl.checked ? "#f57c00"  : "#ffffff"
                         border.color: boilerControl.checked ? "#f57c00"  : "#cccccc"
 
                         Rectangle {
                             x: boilerControl.checked ? parent.width - width : 0
-                            width: 26
-                            height: 26
-                            radius: 13
+                            width: 26 *1.5
+                            height: 26 *1.5
+                            radius: 13 *1.5
                             color: boilerControl.down ? "#cccccc" : "#ffffff"
                             border.color: boilerControl.checked ? (boilerControl.down ? "#f57c00"  : "#21be2b") : "#999999"
                         }
@@ -506,7 +509,7 @@ RowLayout {
                 id: washerBadge
                 showWhenIdle: true
                 Layout.alignment: Qt.AlignRight | Qt.AlignVCenter
-                Layout.rightMargin:20
+                Layout.rightMargin: 1
 
 
             }

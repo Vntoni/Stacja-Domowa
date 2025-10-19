@@ -26,8 +26,8 @@ Rectangle {
     z: 100
 
     // rozmiary pigułki
-    implicitHeight: 80
-    implicitWidth: 200
+    implicitHeight: 160
+    implicitWidth: 300
     radius: 30
 
     // tło wg stanu (zostawiam Twoje)
@@ -44,7 +44,7 @@ Rectangle {
 
         // Ikona po lewej z lekkim marginesem
         Image {
-            source: "qrc:/icons/laundry-machine.png"
+            source: "qrc:/icons128/laundry-machine_128.png"
             width: 56; height: 56
             Layout.alignment: Qt.AlignVCenter | Qt.AlignLeft
             Layout.leftMargin: 6
@@ -70,7 +70,7 @@ Rectangle {
             text: !online ? "OFF"
                  : (remaining > 0 ? remaining + " min" : "OFF")
             color: "white"
-            font.pixelSize: 20
+            font.pixelSize: 28
             Layout.alignment: Qt.AlignVCenter
             horizontalAlignment: Text.AlignHCenter
         }
