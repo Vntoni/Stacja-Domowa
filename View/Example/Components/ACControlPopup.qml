@@ -113,11 +113,11 @@ Popup {
         // Tekst temperatury
         contentItem: Text {
             text: control.value.toFixed(1) + "°C"
-            font.pixelSize: 24
+            font.pixelSize: 28
             color: "white"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 54
-            anchors.verticalCenterOffset: 69
+            anchors.horizontalCenterOffset: 59
+            anchors.verticalCenterOffset: 81
         }
     }
 }

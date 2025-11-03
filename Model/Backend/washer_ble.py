@@ -94,8 +94,8 @@ class WasherMachine:
         return WasherStatus(online=online, remaining=remaining, last_seen=last_seen)
 
 # Test lokalny:
-async def main():
-    wm = WasherMachine()  # jeśli znasz MAC, podaj
-    status = await wm.snapshot(listen_seconds=8.0)
-    print("online:", status.online, "remaining:", status.remaining_minutes, "last_seen:", status.last_seen)
-asyncio.run(main())
+# async def main():
+#     wm = WasherMachine()  # jeśli znasz MAC, podaj
+#     status = await wm.snapshot(listen_seconds=8.0)
+#     print("online:", status.online, "remaining:", status.remaining_minutes, "last_seen:", status.last_seen)
+# asyncio.run(main())

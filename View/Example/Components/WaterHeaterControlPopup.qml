@@ -21,8 +21,8 @@ Popup {
     modal: true
     focus: true
     closePolicy: Popup.CloseOnEscape | Popup.CloseOnPressOutside
-    width: 400
-    height: 460
+    width: 400 * 1.5
+    height: 460 * 1.5
     enter: Transition {
         NumberAnimation { property: "opacity"; from: 0.0; to: 0.9 }
     }
@@ -53,13 +53,13 @@ Popup {
 
     ColumnLayout {
         anchors.fill: parent
-        anchors.margins: 16
-        spacing: 16
+        anchors.margins: 24
+        spacing: 28
 
         // === DIAL ===
         Item {
-    Layout.preferredWidth: 150
-    Layout.preferredHeight: 150
+    Layout.preferredWidth: 200
+    Layout.preferredHeight: 200
     Layout.alignment: Qt.AlignHCenter
 
     Dial {
@@ -111,11 +111,11 @@ Popup {
         // Tekst temperatury
         contentItem: Text {
             text: control.value.toFixed(1) + "°C"
-            font.pixelSize: 18
+            font.pixelSize: 28
             color: "white"
             anchors.centerIn: parent
-            anchors.horizontalCenterOffset: 51
-            anchors.verticalCenterOffset: 61
+            anchors.horizontalCenterOffset: 59
+            anchors.verticalCenterOffset: 81
         }
     }
 }
@@ -131,9 +131,9 @@ Popup {
                 checkable: true
                 checked: initialGreen
                 text: "Tryb ekonomiczny"
-                font.pixelSize: 16
+                font.pixelSize: 18
                 Layout.fillWidth: true
-                height: 50
+                Layout.preferredHeight: 68
                 ButtonGroup.group: modeButton
 
                 Material.background: checked ? "#558B2F" : "#546e7a"
@@ -146,9 +146,9 @@ Popup {
                 checkable: true
                 checked: initialMemory
                 text: "Memory Mode"
-                font.pixelSize: 16
+                font.pixelSize: 18
                 Layout.fillWidth: true
-                height: 50
+                Layout.preferredHeight: 68
                 ButtonGroup.group: modeButton
 
                 Material.background: checked ? "#5C6BC0" : "#546e7a"
@@ -161,9 +161,9 @@ Popup {
                 checkable: true
                 checked: initialBoost
                 text: "Boost Mode"
-                font.pixelSize: 16
+                font.pixelSize: 18
                 Layout.fillWidth: true
-                height: 50
+                Layout.preferredHeight: 68
                 ButtonGroup.group: modeButton
 
                 Material.background: checked ? "#dc6f00" : "#546e7a"
@@ -176,9 +176,9 @@ Popup {
                 checkable: true
                 checked: initialProgram
                 text: "Program Mode"
-                font.pixelSize: 16
+                font.pixelSize: 18
                 Layout.fillWidth: true
-                height: 50
+                Layout.preferredHeight: 68
                 ButtonGroup.group: modeButton
 
                 Material.background: checked ? "#039BE5" : "#546e7a"
@@ -192,8 +192,8 @@ Popup {
         // === PRZYCISK "SET" ===
         Button {
             text: "Set"
-            font.pixelSize: 16
-            Layout.alignment: Qt.AlignHCenter
+            font.pixelSize: 18
+            Layout.fillWidth: true
             onClicked: {
                 backend.set_water_target_temp(control.value)
                 if (econButton.checked) backend.set_water_heater_mode("GREEN")
