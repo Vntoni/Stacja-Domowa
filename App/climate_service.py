@@ -55,3 +55,6 @@ class ClimateService:
 
     def online_map(self) -> dict:
         return {room: ac.is_online() for room, ac in self._units.items()}
+
+
+

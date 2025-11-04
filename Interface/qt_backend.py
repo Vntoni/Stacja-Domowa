@@ -3,6 +3,8 @@ from App.climate_service import ClimateService
 from App.water_heater_service import WaterHeaterService
 from App.washer_service import WasherService
 from Ports.washer import WasherSnapshot
+from qasync import asyncSlot
+
 
 class QtHomeBackend(QObject):
     # statusy online
@@ -46,7 +48,7 @@ class QtHomeBackend(QObject):
             self.washerLastSeenChanged.emit(st.last_seen)
 
     # --- init/refresh
-    @Slot()
+    @asyncSlot()
     async def init_all(self):
         # odśwież AC i boiler, oceń online
         await self._climate.refresh_all()
@@ -58,87 +60,89 @@ class QtHomeBackend(QObject):
         self.boilerOnlineChanged.emit(True)  # jeśli refresh OK
         self.ready.emit(True)
 
-    @Slot()
+    @asyncSlot()
     async def refresh_connection(self):
         await self.init_all()
 
     # --- AC
-    @Slot(str)
+    @asyncSlot(str)
     async def turn_on_ac(self, room: str): await self._climate.turn_on(room)
 
-    @Slot(str)
+    @asyncSlot(str)
     async def turn_off_ac(self, room: str): await self._climate.turn_off(room)
 
-    @Slot(str)
+    @asyncSlot(str)
     async def get_temp_indoor(self, room: str):
+        print(self._climate.temp_indoor(room))
         self.tempIndoorChanged.emit(room, self._climate.temp_indoor(room))
 
-    @Slot(str)
+    @asyncSlot(str)
     async def get_target_temp(self, room: str):
         self.targetTemperatureReceived.emit(room, self._climate.target_temp(room))
 
-    @Slot(str, float)
+    @asyncSlot(str, float)
     async def set_target_temp(self, room: str, temp: float):
         await self._climate.set_target_temp(room, temp)
         self.targetTemperatureReceived.emit(room, self._climate.target_temp(room))
 
-    @Slot(str)
+    @asyncSlot(str)
     async def get_economy(self, room: str):
         self.economyReceived.emit(room, self._climate.economy(room))
 
-    @Slot(str, bool)
+    @asyncSlot(str, bool)
     async def set_economy(self, room: str, mode: bool):
         await self._climate.set_economy(room, mode)
         self.economyReceived.emit(room, self._climate.economy(room))
 
-    @Slot(str)
+    @asyncSlot(str)
     async def get_powerful(self, room: str):
         self.powerfulReceived.emit(room, self._climate.powerful(room))
 
-    @Slot(str, bool)
+    @asyncSlot(str, bool)
     async def set_powerful(self, room: str, mode: bool):
         await self._climate.set_powerful(room, mode)
         self.powerfulReceived.emit(room, self._climate.powerful(room))
 
-    @Slot(str)
+    @asyncSlot(str)
     async def get_low_noise(self, room: str):
         self.lowNoiseReceived.emit(room, self._climate.low_noise(room))
 
-    @Slot(str, bool)
+    @asyncSlot(str, bool)
     async def set_low_noise(self, room: str, mode: bool):
         await self._climate.set_low_noise(room, mode)
         self.lowNoiseReceived.emit(room, self._climate.low_noise(room))
 
-    @Slot(str)
+    @asyncSlot(str)
     async def get_mode_operation(self, room: str):
         self.modeReceived.emit(room, self._climate.operating_mode(room))
 
-    @Slot(str, int)
+    @asyncSlot(str, int)
     async def set_mode_operation(self, room: str, mode: int):
         await self._climate.set_operating_mode(room, mode)
         self.modeReceived.emit(room, self._climate.operating_mode(room))
 
     # --- Boiler
-    @Slot(bool)
+    @asyncSlot(bool)
     async def set_water_heater_power(self, power: bool):
         await self._boiler.set_power(power)
 
-    @Slot()
+    @asyncSlot()
     async def get_water_heater_power(self):
         self.powerStatus.emit(self._boiler.get_power())
 
-    @Slot(float)
+    @asyncSlot(float)
     async def set_water_target_temp(self, temp: float):
         await self._boiler.set_target_temp(temp)
 
-    @Slot()
+    @asyncSlot()
     async def get_water_target_temp(self):
         self.targetTemperatureReceived.emit("boiler", self._boiler.get_target_temp())
 
-    @Slot()
+    @asyncSlot()
     async def get_water_heater_mode(self):
         self.modeOperating.emit(self._boiler.get_mode())
 
-    @Slot()
+    @asyncSlot()
     async def get_water_temp(self):
         self.waterTemp.emit("boiler", self._boiler.get_current_temp())
+

@@ -1,5 +1,6 @@
 # src/home/composition.py
 import os
+import asyncio
 import ariston
 from pyairstage.airstageAC import AirstageAC, ApiCloud
 from Model.Backend.washer_ble import WasherMachine
@@ -16,23 +17,36 @@ async def build_backend() -> QtHomeBackend:
     s = get_settings()
 
     # --- Airstage (klima) ---
-    # Uwaga: użyj właściwych danych logowania Airstage (tutaj pobieramy z ENV)
-    api = ApiCloud(username=s.user, password=s.pwd, country=s.airstage_country)
-    await api.authenticate()
+    try:
+        api = ApiCloud(username=s.user, password=s.pwd, country=s.airstage_country)
+        await api.authenticate()
+    except Exception as e:
+        print(f"Błąd logowania do AIRSTAGE API: {e}")
 
     ac_salon = AirstageACAdapter(s.salon_id, api, AirstageAC)
     ac_jadalnia = AirstageACAdapter(s.jadalnia_id, api, AirstageAC)
     climate = ClimateService({"Salon": ac_salon, "Jadalnia": ac_jadalnia})
 
     # --- Ariston (bojler) ---
-    await ariston._async_connect(s.user, s.ariston_pwd)
-    boiler_client = await ariston.async_hello(s.user, s.ariston_pwd, s.ariston_device_id, True, "en-US")
+    try:
+        await ariston._async_connect(s.user, s.ariston_pwd)
+        boiler_client = await ariston.async_hello(s.user, s.ariston_pwd, s.ariston_device_id, True, "en-US")
+    except Exception as e:
+        print(f"Błąd logowania do Boilera API: {e}")
     boiler = AristonBoilerAdapter(boiler_client)
     boiler_svc = WaterHeaterService(boiler)
 
     # --- Pralka (BLE) ---
-    washer_adapter = WasherBleAdapter(WasherMachine())
-    washer_svc = WasherService(washer_adapter, poll_seconds=s.washer_poll_seconds)
+    try:
+        washer_adapter = WasherBleAdapter(WasherMachine())
+        washer_svc = WasherService(washer_adapter, poll_seconds=s.washer_poll_seconds)
+    except Exception as e:
+        print(f"Błąd polaczenia do Pralki BLE: {e}")
 
     # --- Qt adapter (QObject) ---
     return QtHomeBackend(climate, boiler_svc, washer_svc)
+
+async def main():
+    await build_backend()
+
+asyncio.run(main())

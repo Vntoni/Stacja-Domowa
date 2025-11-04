@@ -1,5 +1,6 @@
 from typing import Any
 from Ports.ac import ACUnitPort
+from pyairstage.airstageAC import AirstageAC, ApiCloud
 
 class AirstageACAdapter(ACUnitPort):
     def __init__(self, device_id: str, api_cloud: Any, impl_cls):
