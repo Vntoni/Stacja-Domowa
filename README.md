@@ -1,10 +1,12 @@
-Home Station
+**Home Station**
 
-HW: Rasperry Pi 5, Raspberry Pi Touch Display 2 (7'')
-Frontend: QML
-Backend: Python, PyQT6
+**HW**: Rasperry Pi 5, Raspberry Pi Touch Display 2 (7'')
 
-Plan to integrate:
+**Frontend**: QML
+
+**Backend**: Python, PyQT6
+
+**Plan to integrate**:
 - AC units (API connection, Control of temperature, Modes, reading the room temperature, working automation in summer/winter) ✔
 - Electric heaters (API connection, Control of temperature, Modes, reading the room temperature, working automation in summer/winter) ❌ 
 - Water Heater (API connection, Control of temperature, Modes, reading the room temperature, working automation in summer/winter) ✔
@@ -13,7 +15,7 @@ Plan to integrate:
 - Weather station (Build and connect to small wather/garden station to read data from sensors(air pollution, humidity, temperature) ❌
 - PV panels (get and save the data of Power production from PV panels) ❌
 
-Further plans to develop:
+**Further plans to develop**:
 - AI voice agent integration - controlling the APP through voice
 
 
