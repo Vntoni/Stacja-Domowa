@@ -17,7 +17,7 @@
 
 **Further plans to develop**:
 - AI voice agent integration - controlling the APP through voice
-
+- Add tests
 
   
 In Progress... 
